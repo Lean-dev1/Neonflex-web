@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Servicio de Base de Datos
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_cisneros
+    environment:
+      POSTGRES_USER: leandro
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: cisneros_db
+    ports:
+      - "5432:5432" 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+
+  # Servicio de Backend (Node)
+  app:
+    build: .
+    container_name: backend_cisneros
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app             
+      - /app/node_modules  
+    environment:
+      - PORT=3000
+      
+      - DATABASE_URL=postgres://leandro:password123@db:5432/cisneros_db
+      
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    depends_on:
+      - db 
+    command: npm run dev
+
+volumes:
+  postgres_data:

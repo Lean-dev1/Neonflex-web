@@ -1,95 +1,103 @@
-const pool = require('../config/db');
-const cloudinary = require('../config/cloudinary');
-const streamifier = require('streamifier');
+import { pool } from '../config/db.js'; // Ruta corregida hacia 'config'
+import { uploadImage, deleteImage } from '../config/cloudinary.js'; // Ruta corregida hacia 'config'
+import fs from 'fs';
 
-// Función auxiliar para subir a Cloudinary usando Stream (Memoria)
-const uploadToCloudinary = (buffer) => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: "neonflex_products" },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-    streamifier.createReadStream(buffer).pipe(uploadStream);
-  });
-};
-
-// 1. OBTENER TODOS LOS PRODUCTOS
-const getProducts = async (req, res) => {
+// Obtener todos los productos
+export const getProducts = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+    const result = await pool.query('SELECT * FROM products');
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// 2. CREAR PRODUCTO (CON IMAGEN)
-const createProduct = async (req, res) => {
+// Obtener un solo producto
+export const getProduct = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
+    if (result.rowCount === 0) return res.status(404).json({ message: 'Producto no encontrado' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Crear producto
+export const createProduct = async (req, res) => {
   try {
     const { title, description, price, category } = req.body;
-    
-    // Validar que venga una imagen
-    if (!req.file) {
-      return res.status(400).json({ message: "La imagen es obligatoria" });
+    let image_url = null;
+    let public_id = null;
+
+    if (req.files?.image) {
+      const result = await uploadImage(req.files.image.tempFilePath);
+      image_url = result.secure_url;
+      public_id = result.public_id;
+      // Usamos fs.promises para borrar (funciona en todas las versiones modernas)
+      await fs.promises.unlink(req.files.image.tempFilePath);
     }
 
-    // Subir imagen a Cloudinary
-    const resultCloudinary = await uploadToCloudinary(req.file.buffer);
-
-    // Guardar datos en PostgreSQL
-    const query = `
-      INSERT INTO products (title, description, price, category, image_url, public_id)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *
-    `;
-    
-    const values = [
-      title, 
-      description, 
-      price, 
-      category, 
-      resultCloudinary.secure_url, // URL segura (https)
-      resultCloudinary.public_id   // ID para borrarla luego
-    ];
-
-    const resultDB = await pool.query(query, values);
-    
-    res.status(201).json(resultDB.rows[0]);
-
+    const result = await pool.query(
+      'INSERT INTO products (title, description, price, category, image_url, public_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [title, description, price, category, image_url, public_id]
+    );
+    res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al crear el producto" });
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// ELIMINAR PRODUCTO
-const deleteProduct = async (req, res) => {
+// Actualizar producto
+export const updateProduct = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, price, category } = req.body;
+
   try {
-    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ message: "Producto no encontrado" });
 
-    // Primero buscamos el producto para obtener el public_id de la imagen
-    const product = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
-    
-    if (product.rows.length === 0) {
-      return res.status(404).json({ message: "Producto no encontrado" });
+    const currentProduct = result.rows[0];
+    let new_image_url = currentProduct.image_url;
+    let new_public_id = currentProduct.public_id;
+
+    if (req.files?.image) {
+      if (currentProduct.public_id) {
+        await deleteImage(currentProduct.public_id);
+      }
+      const uploadResult = await uploadImage(req.files.image.tempFilePath);
+      new_image_url = uploadResult.secure_url;
+      new_public_id = uploadResult.public_id;
+      
+      await fs.promises.unlink(req.files.image.tempFilePath);
     }
 
-    // Borramos la imagen de Cloudinary
-    if (product.rows[0].public_id) {
-      await cloudinary.uploader.destroy(product.rows[0].public_id);
-    }
+    const updateQuery = `
+      UPDATE products 
+      SET title = $1, description = $2, price = $3, category = $4, image_url = $5, public_id = $6
+      WHERE id = $7 RETURNING *
+    `;
+    const updated = await pool.query(updateQuery, [title, description, price, category, new_image_url, new_public_id, id]);
 
-    // Borramos de la base de datos
-    await pool.query('DELETE FROM products WHERE id = $1', [id]);
-
-    res.json({ message: "Producto eliminado correctamente" });
-
+    res.json(updated.rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error); // Agregué esto para ver el error real en la consola si falla
+    return res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { getProducts, createProduct, deleteProduct };
+// Borrar producto
+export const deleteProduct = async (req, res) => {
+  try {
+    const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [req.params.id]);
+    if (result.rowCount === 0) return res.status(404).json({ message: 'Producto no encontrado' });
+    
+    if (result.rows[0].public_id) {
+      await deleteImage(result.rows[0].public_id);
+    }
+    
+    return res.sendStatus(204);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

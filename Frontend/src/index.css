@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fondo oscuro por defecto para toda la app */
+body {
+  background-color: #0f172a; /* Slate 900 */
+  color: white;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}

@@ -15,7 +15,7 @@ app.use('/api/products', productRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-    res.send('API Backend Cisneros funcionando 🚀');
+    res.send('API Backend neonflex funcionando');
 });
 
 // Iniciar servidor

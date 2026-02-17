@@ -4,20 +4,20 @@ services:
   # Servicio de Base de Datos
   db:
     image: postgres:15-alpine
-    container_name: postgres_cisneros
+    container_name: postgres_neonflex
     environment:
       POSTGRES_USER: leandro
       POSTGRES_PASSWORD: password123
-      POSTGRES_DB: cisneros_db
+      POSTGRES_DB: neonflex_db
     ports:
-      - "5432:5432" 
+      - "5433:5432" 
     volumes:
       - postgres_data:/var/lib/postgresql/data 
 
   # Servicio de Backend (Node)
   app:
     build: .
-    container_name: backend_cisneros
+    container_name: backend_neonflex
     ports:
       - "3000:3000"
     volumes:
@@ -26,7 +26,7 @@ services:
     environment:
       - PORT=3000
       
-      - DATABASE_URL=postgres://leandro:password123@db:5432/cisneros_db
+      - DATABASE_URL=postgres://leandro:password123@db:5432/neonflex_db
       
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}

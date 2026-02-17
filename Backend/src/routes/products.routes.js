@@ -1,16 +1,21 @@
-const { Router } = require('express');
-const multer = require('multer');
-const { getProducts, createProduct, deleteProduct } = require('../controllers/products.controller');
+import { Router } from 'express';
+import { 
+    createProduct, 
+    deleteProduct, 
+    getProduct, 
+    getProducts, 
+    updateProduct 
+} from '../controllers/products.controller.js';
 
 const router = Router();
 
-// Configuración de Multer 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// Como en index.js ya dijimos que estas rutas empiezan con "/api/products",
+// aquí solo ponemos "/" para referirnos a la raíz de esa sección.
 
-// Definir rutas
-router.get('/', getProducts);
-router.post('/', upload.single('image'), createProduct); // 'image' es el name del input en el frontend
-router.delete('/:id', deleteProduct);
+router.get('/', getProducts);          // GET /api/products
+router.get('/:id', getProduct);        // GET /api/products/123
+router.post('/', createProduct);       // POST /api/products
+router.put('/:id', updateProduct);     // PUT /api/products/123
+router.delete('/:id', deleteProduct);  // DELETE /api/products/123
 
-module.exports = router;
+export default router;

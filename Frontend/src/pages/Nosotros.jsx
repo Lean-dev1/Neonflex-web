@@ -31,9 +31,9 @@ const Nosotros = () => {
             <div className="relative z-10 rounded-2xl overflow-hidden border border-neutral-700 shadow-2xl h-[400px]">
                 <img 
                     src={tallerImg} 
-                    onError={(e) => {e.target.style.display='none';}} // Si falla, se oculta
+                    onError={(e) => {e.target.style.display='none';}} 
                     alt="Nuestro Taller" 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
+                    className="w-full h-full object-cover  transition-all duration-700" 
                 />
                 {/* Fallback si no hay imagen: un fondo lindo */}
                 <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center -z-10">

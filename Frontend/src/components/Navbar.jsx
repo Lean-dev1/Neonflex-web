@@ -35,7 +35,7 @@ export default function Navbar() {
             {/* LOGO */}
             <div className="flex shrink-0 items-center">
              <Link to="/" className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">
-                NEON FLEX ⚡
+                NonFlexPremium
              </Link>
             </div>
 

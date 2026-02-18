@@ -9,27 +9,25 @@ dotenv.config();
 
 const app = express();
 
-// --- ZONA DE CONFIGURACIÓN (MIDDLEWARES) ---
-// ¡ESTO TIENE QUE IR PRIMERO!
+//MIDLEWARES 
 app.use(cors());
-app.use(express.json()); // <--- CRÍTICO: Permite leer el usuario y contraseña
+app.use(express.json()); 
 
 app.use(fileUpload({
     useTempFiles: true,
     tempFileDir: './uploads'
 }));
 
-// --- ZONA DE RUTAS ---
-// Ahora sí, definimos las rutas después de configurar json
+//aca se definen las rutas 
 app.use('/api/auth', authRoutes);     
 app.use('/api/products', productRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-    res.send('API Backend Neon Flex funcionando 🚀');
+    res.send('API backend en funcionamiento');
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`El servidor en el puerto ${PORT} se encuentra en correcto funcionamiento`);
 });

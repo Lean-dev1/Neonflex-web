@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { FaWhatsapp, FaRulerHorizontal, FaRulerVertical, FaPalette, FaFont, FaImage, FaPaperPlane, FaCloudUploadAlt } from 'react-icons/fa';
 
-// --- CONFIGURACIÓN DE LA IMAGEN DE FONDO ---
-// OPCIÓN A (Usar imagen de internet por ahora):
-const bgImage = "https://images.unsplash.com/photo-1495069781661-d683f21b4725?q=80&w=2070&auto=format&fit=crop";
-
-// OPCIÓN B (Cuando subas tu imagen):
-// 1. Guarda tu foto en la carpeta: Frontend/src/assets/images/fondo-presupuesto.jpg
-// 2. Descomenta la siguiente línea y borra la const bgImage de arriba:
-// import bgImage from '../assets/images/fondo-presupuesto.jpg';
+import bgImage from '../assets/images/neon.jpg';
 
 const Presupuesto = () => {
   
@@ -50,7 +43,7 @@ const Presupuesto = () => {
   return (
     <div className="min-h-screen text-white pt-10 pb-20 px-4 font-sans relative">
       
-      {/* --- FONDO ESTÁTICO DE ALTA CALIDAD --- */}
+      {/*  FONDO ESTÁTICO DE ALTA CALIDAD  */}
       <div className="fixed inset-0 w-full h-full -z-50">
         <img 
           src={bgImage} 
@@ -63,7 +56,7 @@ const Presupuesto = () => {
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
         
-        {/* --- COLUMNA IZQUIERDA: EL COTIZADOR --- */}
+        {/*  EL COTIZADOR --- */}
         <div className="animate-fade-in-up">
           <div className="mb-8">
              <h1 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-red drop-shadow-lg">
@@ -86,7 +79,7 @@ const Presupuesto = () => {
             <input type="hidden" name="_next" value="http://localhost:5173/presupuesto" />
             <input type="hidden" name="_captcha" value="false" />
 
-            {/* PASO 1: TIPO DE CARTEL */}
+            {/* TIPO DE CARTEL */}
             <div>
               <label className="text-sm font-bold text-neon-blue uppercase mb-3 block tracking-wider">1. ¿Qué querés hacer?</label>
               <div className="grid grid-cols-2 gap-4">
@@ -109,7 +102,7 @@ const Presupuesto = () => {
               </div>
             </div>
 
-            {/* PASO 2: CONTENIDO */}
+            {/* CONTENIDO */}
             {formData.tipo === 'texto' ? (
                <div className="animate-fade-in-up">
                  <label className="text-sm font-bold text-gray-400 uppercase mb-2 block">Tu Frase</label>
@@ -169,7 +162,7 @@ const Presupuesto = () => {
               </div>
             )}
 
-            {/* PASO 3: COLOR Y MEDIDAS */}
+            {/* COLOR Y MEDIDAS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Color Visual */}
               <div>
@@ -214,7 +207,7 @@ const Presupuesto = () => {
               </div>
             </div>
 
-            {/* PASO 4: DATOS DE CONTACTO */}
+            {/* DATOS DE CONTACTO */}
             <div className="pt-6 border-t border-neutral-700">
               <label className="text-sm font-bold text-white uppercase mb-4 block">Tus Datos</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,7 +224,7 @@ const Presupuesto = () => {
           </form>
         </div>
 
-        {/* --- COLUMNA DERECHA: INFO Y WHATSAPP --- */}
+        {/*INFO Y WHATSAPP*/}
         <div className="flex flex-col justify-center space-y-8">
            
            <div className="bg-neutral-900/80 p-8 rounded-3xl border border-neutral-700 relative overflow-hidden backdrop-blur-md">

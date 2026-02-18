@@ -1,14 +1,13 @@
 import React from 'react';
 import { FaHandHoldingHeart, FaLightbulb, FaTools } from 'react-icons/fa';
 
-// Asegúrate de tener esta imagen en tu carpeta o usa una placeholder por ahora
 import tallerImg from '../assets/images/neon.jpg'; 
 
 const Nosotros = () => {
   return (
     <div className="min-h-screen bg-neutral-950 text-white font-sans">
       
-      {/* --- HISTORIA (Hero) --- */}
+      {/*  HISTORIA*/}
       <div className="max-w-7xl mx-auto py-20 px-4 grid md:grid-cols-2 gap-16 items-center">
         <div className="animate-fade-in-up">
            <span className="text-neon-blue font-bold tracking-widest uppercase text-sm mb-2 block">Nuestra Historia</span>
@@ -29,7 +28,6 @@ const Nosotros = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-neon-blue via-transparent to-neon-red rounded-2xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
             
             {/* Imagen del taller */}
-            {/* Si no tienes la imagen taller.jpg aún, esto mostrará un gris oscuro elegante */}
             <div className="relative z-10 rounded-2xl overflow-hidden border border-neutral-700 shadow-2xl h-[400px]">
                 <img 
                     src={tallerImg} 
@@ -45,7 +43,7 @@ const Nosotros = () => {
         </div>
       </div>
 
-      {/* --- VALORES (Tarjetas Negras) --- */}
+    
       <div className="bg-neutral-900 py-20 border-y border-neutral-800 relative overflow-hidden">
          {/* Decoración de fondo */}
          <div className="absolute top-0 left-1/4 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl -z-0 pointer-events-none"></div>

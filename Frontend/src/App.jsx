@@ -13,7 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <BrowserRouter>
-      {/* QUITAMOS 'bg-neutral-950' de aquí. Ahora el fondo es transparente por defecto. */}
+
       <div className="flex flex-col min-h-screen text-white">
         <Navbar />
         <main className="flex-grow">

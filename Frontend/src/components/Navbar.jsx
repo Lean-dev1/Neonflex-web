@@ -2,7 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link, useLocation } from 'react-router-dom'
 
-// Definimos tus rutas aquí
+// Definimos las rutas aca 
 const navigation = [
   { name: 'Inicio', href: '/', current: true },
   { name: 'Productos', href: '/productos', current: false },
@@ -15,14 +15,14 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-  const location = useLocation(); // Hook para saber en qué página estamos
+  const location = useLocation(); 
 
   return (
     <Disclosure as="nav" className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            {/* Mobile menu button */}
+    
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
               <span className="absolute -inset-0.5" />
               <span className="sr-only">Abrir menú</span>
@@ -32,14 +32,14 @@ export default function Navbar() {
           </div>
           
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            {/* LOGO */}
+
             <div className="flex shrink-0 items-center">
              <Link to="/" className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">
                 NonFlexPremium
              </Link>
             </div>
 
-            {/* MENÚ DE ESCRITORIO */}
+
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => {
@@ -64,7 +64,7 @@ export default function Navbar() {
           </div>
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* Botón de Notificaciones (Podemos dejarlo o quitarlo) */}
+         
             <button
               type="button"
               className="relative rounded-full bg-slate-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -74,7 +74,6 @@ export default function Navbar() {
               <BellIcon aria-hidden="true" className="size-6" />
             </button>
 
-            {/* Profile dropdown (Menú de Usuario) */}
             <Menu as="div" className="relative ml-3">
               <div>
                 <MenuButton className="relative flex rounded-full bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -82,7 +81,7 @@ export default function Navbar() {
                   <span className="sr-only">Abrir menú usuario</span>
                   {/* Avatar genérico o foto de perfil */}
                   <img
-                    alt=""
+                    alt="Logo"
                     src=""
                     className="size-8 rounded-full border border-slate-600"
                   />
@@ -108,7 +107,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MENÚ MÓVIL (Al hacer clic en las rayitas) */}
+
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => {

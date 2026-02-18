@@ -2,7 +2,7 @@ import React from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
-  // Función para redirigir a WhatsApp con mensaje pre-armado
+  // Con esta funcion redirigimos al WhatsApp con un mensaje pre-armado
   const handleConsultar = () => {
     const mensaje = `Hola! Me interesa el cartel "${product.title}" que vi en la web.`;
     const url = `https://wa.me/54911XXXXXXXX?text=${encodeURIComponent(mensaje)}`;

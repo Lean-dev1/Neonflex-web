@@ -67,7 +67,7 @@ const Admin = () => {
             <button onClick={handleLogout} className="text-sm font-bold text-neutral-500 hover:text-white flex items-center gap-2"><FaSignOutAlt /> Salir</button>
         </div>
 
-        {/* SECCIÓN DE CARGA (Usamos neutral-900) */}
+        {/* SECCIÓN DE CARGA  */}
         <div className="bg-neutral-900 p-8 rounded-2xl shadow-2xl border border-neutral-800 mb-12">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold flex items-center gap-3 text-white">

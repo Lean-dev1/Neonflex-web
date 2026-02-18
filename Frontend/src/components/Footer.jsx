@@ -7,16 +7,16 @@ const Footer = () => {
     <footer className="bg-slate-950 border-t border-slate-800 pt-12 pb-6 text-gray-400">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         
-        {/* Columna 1: Marca */}
+        {/*Detalles del emprendimiento*/}
         <div>
           <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple mb-4">
-            NEON FLEX ⚡
+            NeonFlexPremium
           </h2>
           <p className="text-sm mb-4">
             Iluminamos tus ideas. Cartelería LED personalizada y soluciones en impresión 3D para tu negocio u hogar.
           </p>
           <div className="flex gap-4">
-            {/* Reemplaza con los links reales de tu madrina */}
+            {/*Redes y whatsapp */}
             <a href="https://www.instagram.com/neonflexpremium/" target="_blank" rel="noopener noreferrer" className="hover:text-neon-pink transition-colors">
               <FaInstagram size={24} />
             </a>
@@ -26,7 +26,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Columna 2: Links Rápidos */}
+        {/*Links Rapidos */}
         <div>
           <h3 className="text-white font-bold mb-4 text-lg">Explorar</h3>
           <ul className="space-y-2">
@@ -38,7 +38,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Columna 3: Contacto */}
+        {/*Contacto */}
         <div>
           <h3 className="text-white font-bold mb-4 text-lg">Contacto</h3>
           <ul className="space-y-3 text-sm">

@@ -20,7 +20,7 @@ const Home = () => {
   const fetchProducts = async () => {
     try {
       const res = await api.get('/products');
-      // Filtramos solo Portfolio para el Home
+      // Filtro solo Portfolio para el Home
       const trabajosRealizados = res.data.filter(p => p.category === 'portfolio').slice(0, 3);
       setProducts(trabajosRealizados); 
     } catch (error) {
@@ -81,7 +81,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* INSIGNIAS (Barra Negra) */}
+      {/* INSIGNIAS*/}
       <div className="bg-black py-10 border-b border-neutral-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative z-10 divide-y md:divide-y-0 md:divide-x divide-neutral-800">
           <div className="flex flex-col items-center gap-3 p-2">
@@ -110,7 +110,7 @@ const Home = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
             <div className="hidden md:block absolute top-14 left-0 w-full h-1 bg-gradient-to-r from-neon-blue via-purple-900 to-neon-red -z-0 opacity-20"></div>
-            {/* Pasos (Usando neutral-900 para las cajas) */}
+            {/* Pasos*/}
             <div className="relative z-10 flex flex-col items-center text-center group">
               <div className="w-28 h-28 bg-neutral-900 rounded-2xl rotate-3 flex items-center justify-center border-2 border-neutral-800 shadow-xl mb-8 group-hover:border-neon-blue group-hover:rotate-6 transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(0,240,255,0.3)]">
                 <FaRegLightbulb className="text-5xl text-neon-blue -rotate-3 group-hover:scale-110 transition-transform" />
@@ -118,7 +118,7 @@ const Home = () => {
               <h3 className="text-2xl font-bold mb-3">1. Tu Idea</h3>
               <p className="text-neutral-400 px-4 leading-relaxed">Contanos tu frase, logo o dibujo y las medidas. ¡Nosotros lo imaginamos en luz!</p>
             </div>
-            {/* ... (Repetir patrón para los otros pasos) ... */}
+    
              <div className="relative z-10 flex flex-col items-center text-center group">
               <div className="w-28 h-28 bg-neutral-900 rounded-2xl -rotate-3 flex items-center justify-center border-2 border-neutral-800 shadow-xl mb-8 group-hover:border-neon-red group-hover:-rotate-6 transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(255,23,68,0.3)]">
                 <FaPalette className="text-5xl text-neon-red rotate-3 group-hover:scale-110 transition-transform" />

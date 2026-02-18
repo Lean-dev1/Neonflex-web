@@ -8,3 +8,13 @@ CREATE TABLE products (
     public_id TEXT, -- Para poder borrar la foto de Cloudinary después
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 1. Crear la tabla de usuarios
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO users (username, password) 
+VALUES ('admin', '$2b$10$fS8V1eW.P.B/y.sgT0.xEO.W.d.w.h.u.r.t.e.x.t');

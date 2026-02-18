@@ -8,7 +8,8 @@ import Admin from './pages/Admin.jsx';
 import Productos from './pages/Productos.jsx';
 import Presupuesto from './pages/Presupuesto.jsx';
 import Nosotros from './pages/Nosotros.jsx';
-
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <BrowserRouter>
@@ -24,7 +25,14 @@ function App() {
             <Route path="/productos" element={<Productos />} />
             <Route path="/presupuesto" element={<Presupuesto />} />
             <Route path="/nosotros" element={<Nosotros />} />
-            <Route path="/admin" element={<Admin />} />
+          {/* Ruta de Login (Pública) */}
+          <Route path="/login" element={<Login />} />
+
+          {/* RUTAS PROTEGIDAS */}
+          <Route element={<ProtectedRoute />}>
+             <Route path="/admin" element={<Admin />} />
+          </Route>
+          
           </Routes>
         </main>
 

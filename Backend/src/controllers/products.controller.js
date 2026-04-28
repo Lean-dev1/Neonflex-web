@@ -1,8 +1,8 @@
-import { pool } from '../config/db.js'; // Ruta corregida hacia 'config'
-import { uploadImage, deleteImage } from '../config/cloudinary.js'; // Ruta corregida hacia 'config'
+import { pool } from '../config/db.js'; 
+import { uploadImage, deleteImage } from '../config/cloudinary.js';
 import fs from 'fs';
 
-// Obtener todos los productos
+// Obtener todos los productos 
 export const getProducts = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM products');
@@ -34,7 +34,7 @@ export const createProduct = async (req, res) => {
       const result = await uploadImage(req.files.image.tempFilePath);
       image_url = result.secure_url;
       public_id = result.public_id;
-      // Usamos fs.promises para borrar (funciona en todas las versiones modernas)
+      
       await fs.promises.unlink(req.files.image.tempFilePath);
     }
 
@@ -81,7 +81,7 @@ export const updateProduct = async (req, res) => {
 
     res.json(updated.rows[0]);
   } catch (error) {
-    console.error(error); // Agregué esto para ver el error real en la consola si falla
+    console.error(error); 
     return res.status(500).json({ message: error.message });
   }
 };

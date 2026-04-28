@@ -9,13 +9,10 @@ import {
 
 const router = Router();
 
-// Como en index.js ya dijimos que estas rutas empiezan con "/api/products",
-// aquí solo ponemos "/" para referirnos a la raíz de esa sección.
-
-router.get('/', getProducts);          // GET /api/products
-router.get('/:id', getProduct);        // GET /api/products/123
-router.post('/', createProduct);       // POST /api/products
-router.put('/:id', updateProduct);     // PUT /api/products/123
-router.delete('/:id', deleteProduct);  // DELETE /api/products/123
+router.get('/', getProducts);          
+router.get('/:id', getProduct);        
+router.post('/', createProduct);       
+router.put('/:id', updateProduct);     
+router.delete('/:id', deleteProduct);  
 
 export default router;

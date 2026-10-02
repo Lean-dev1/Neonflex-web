@@ -1,32 +1,33 @@
 import express from 'express';
 import cors from 'cors';
-import fileUpload from 'express-fileupload'; // Necesario para las fotos
+import fileUpload from 'express-fileupload'; 
 import dotenv from 'dotenv';
-import productRoutes from './routes/products.routes.js'; // OJO: siempre pon .js al final
+import productRoutes from './routes/products.routes.js'; 
+import authRoutes from './routes/auth.routes.js';
 
 dotenv.config();
 
 const app = express();
 
-// Middlewares
+//MIDLEWARES 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); 
 
-// Configuración para recibir imágenes (IMPORTANTE)
 app.use(fileUpload({
     useTempFiles: true,
     tempFileDir: './uploads'
 }));
 
-// Rutas
+//aca se definen las rutas 
+app.use('/api/auth', authRoutes);     
 app.use('/api/products', productRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-    res.send('API Backend Neon Flex funcionando 🚀');
+    res.send('API backend en funcionamiento');
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`El servidor en el puerto ${PORT} se encuentra en correcto funcionamiento`);
 });

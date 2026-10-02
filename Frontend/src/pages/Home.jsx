@@ -1,361 +1,251 @@
-import React, { useState, useEffect, useRef } from 'react';
-import api from '../api/axios';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  FaStar, FaArrowRight, FaTruck, FaCreditCard, FaStore, FaWhatsapp, FaCheck, FaAngleDown
-} from 'react-icons/fa';
+import { FaWhatsapp, FaChevronRight, FaArrowRight, FaBars, FaTimes, FaShoppingBag, FaCommentAlt } from 'react-icons/fa';
 
+// Imágenes de ejemplo o las que prefieras usar
 import imgAbasta from '../assets/images/abasta.png';
-import imgAlas from '../assets/images/alas.png';
-import imgMurcielago from '../assets/images/alasdiablo.png';
 import imgCabrona from '../assets/images/cabrona.png';
-import imgBeerTruck from '../assets/images/cerveza.png';
-import imgAuto from '../assets/images/coche.png';
 import imgBurger from '../assets/images/hamburguesa.png';
-import imgDiego from '../assets/images/firmadiego.png';
-import imgLogoM from '../assets/images/logoraro.png';
 import imgLumi from '../assets/images/lumi.png';
 
-const heroImages = [
-  imgAbasta, imgAlas, imgMurcielago, imgCabrona, imgBeerTruck,
-  imgAuto, imgBurger, imgDiego, imgLogoM, imgLumi
+const heroFeatures = [
+  {
+    name: "Custom Type",
+    spec: "Diseño a medida · Cian",
+    image: imgLumi,
+  },
+  {
+    name: "Better Way",
+    spec: "Serie Signature · Cálido",
+    image: imgAbasta,
+  },
+  {
+    name: "Good Vibes",
+    spec: "Serie Studio · Rosa",
+    image: imgCabrona,
+  },
 ];
 
-const RevealOnScroll = ({ children, direction = 'up', delay = 0 }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
+const productsMock = [
+  {
+    name: "Create Your Own",
+    detail: "Diseño 100% personalizado",
+    price: "Desde $89.900",
+    tag: "MÁS ELEGIDO",
+    image: imgCabrona,
+  },
+  {
+    name: "Better Way",
+    detail: "Cálido · 60 × 28 cm",
+    price: "$112.500",
+    tag: "NUEVO",
+    image: imgBurger,
+  },
+  {
+    name: "Good Vibes Only",
+    detail: "Rosa · 50 × 50 cm",
+    price: "$129.900",
+    image: imgLumi,
+  },
+];
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  let translateClass = 'translate-y-16';
-  if (direction === 'left') translateClass = '-translate-x-16';
-  if (direction === 'right') translateClass = 'translate-x-16';
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${translateClass}`
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
+const waLink = "https://wa.me/5491164477337?text=Hola%20NeonFlexPremium%2C%20quiero%20cotizar%20mi%20cartel";
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
-  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentHeroIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 6000); 
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const res = await api.get('/products');
-      const trabajosRealizados = res.data.filter(p => p.category === 'portfolio').slice(0, 4);
-      setProducts(trabajosRealizados); 
-    } catch (error) {
-      console.error("Error cargando portfolio");
-    }
-  };
-
-  useEffect(() => { fetchProducts(); }, []);
+  const [activeHero, setActiveHero] = useState(0);
+  const [activeFilter, setActiveFilter] = useState("Todos");
 
   return (
-    <div className="bg-white dark:bg-neutral-950 text-gray-900 dark:text-white font-tilt transition-colors duration-300 overflow-hidden">
+    <div className="bg-[#050508] text-gray-300 font-['Rajdhani'] min-h-screen selection:bg-cyan-400 selection:text-black">
       
       {/* ========================================= */}
-      {/* 1. HERO SECTION (TAMAÑO REFINADO)           */}
+      {/* 1. HERO INMERSIVO Y ORIGINAL              */}
       {/* ========================================= */}
-      <div className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black">
-        
-        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-          {heroImages.map((img, index) => (
-            <img 
-              key={index} 
-              src={img} 
-              alt={`Cartel Ambiente ${index + 1}`}
-              className={`absolute inset-0 w-full h-full object-cover transform transition-all duration-[7000ms] ease-out ${
-                index === currentHeroIndex ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
-              }`}
-            />
-          ))}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.8)_100%)]"></div>
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center relative z-10 px-4 pt-32 pb-20 flex flex-col items-center justify-center min-h-screen">
+      <section className="relative min-h-[80vh] flex items-center pt-28 pb-16 px-4 md:px-12 max-w-[1380px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[0.92fr_1.08fr] items-center gap-12 w-full">
           
-          <div className="animate-fade-in-down mb-6">
-             <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-[0.2em] shadow-xl [font-family:system-ui,sans-serif]">
-               <span className="w-1.5 h-1.5 rounded-full bg-neon-red animate-pulse"></span>
-               Diseño & Fabricación a Medida
-             </span>
-          </div>
-          
-          {/* TAMAÑOS REDUCIDOS PARA ESCRITORIO */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-4 text-white leading-[1] tracking-tight animate-fade-in-up uppercase">
-            Creamos Neón <br/>
-            <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-red-300 drop-shadow-[0_0_25px_rgba(0,240,255,0.8)] lowercase text-5xl md:text-7xl lg:text-[6.5rem] tracking-normal">
-              que atrapa miradas
-            </span>
-          </h1>
-          
-          <p className="text-base md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200">
-            Elevamos la identidad visual de tu local o evento con cartelería LED premium. Cotización en el día, calidad garantizada.
-          </p>
-          
-          <div className="flex justify-center animate-fade-in-up delay-300">
-            <Link to="/presupuesto" className="group relative w-full sm:w-auto bg-white text-black font-black py-4 px-10 rounded-full transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs md:text-sm hover:scale-105 overflow-hidden [font-family:system-ui,sans-serif]">
-              <span className="relative z-10 flex items-center gap-3">Cotizar mi proyecto <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></span>
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shimmer z-0"></div>
-            </Link>
-          </div>
-
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center animate-bounce text-white/50">
-           <span className="text-[9px] uppercase tracking-[0.3em] font-bold mb-2 [font-family:system-ui,sans-serif]">Descubrir</span>
-           <FaAngleDown size={16} />
-        </div>
-      </div>
-
-      {/* CINTA DE CONFIANZA */}
-      <RevealOnScroll direction="up" delay={0}>
-        <div className="bg-neutral-900 text-white border-y border-neutral-800 py-3 relative z-20">
-          <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center md:justify-between gap-6 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest text-neutral-300 [font-family:system-ui,sans-serif]">
-            <div className="flex items-center gap-2"><FaTruck className="text-neon-red text-sm" /> Envíos a todo el país</div>
-            <div className="flex items-center gap-2"><FaCreditCard className="text-neon-blue text-sm" /> Todos los medios de pago</div>
-            <div className="flex items-center gap-2"><FaStore className="text-purple-500 text-sm" /> Calidad Premium Garantizada</div>
-          </div>
-        </div>
-      </RevealOnScroll>
-
-      {/* ========================================= */}
-      {/* 2. CATEGORÍAS (H-72 en vez de H-80)       */}
-      {/* ========================================= */}
-      <div className="max-w-6xl mx-auto py-20 px-4 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <RevealOnScroll direction="left" delay={0}>
-            <Link to="/productos" className="group relative h-72 rounded-2xl overflow-hidden bg-black shadow-lg block">
-               <img src={imgCabrona} alt="Frases en Neón" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-               <div className="absolute bottom-6 left-6">
-                  <h3 className="text-3xl font-black text-white tracking-wide mb-1 uppercase">Frases</h3>
-                  <p className="text-neon-blue font-bold text-xs uppercase tracking-widest flex items-center gap-2 [font-family:system-ui,sans-serif]">Ver diseños <FaArrowRight/></p>
-               </div>
-            </Link>
-          </RevealOnScroll>
-
-          <RevealOnScroll direction="up" delay={200}>
-            <Link to="/presupuesto" className="group relative h-72 rounded-2xl overflow-hidden bg-black shadow-lg block">
-               <img src={imgAbasta} alt="Logos a Medida" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-               <div className="absolute bottom-6 left-6">
-                  <h3 className="text-3xl font-black text-white tracking-wide mb-1 uppercase">Comercios</h3>
-                  <p className="text-neon-red font-bold text-xs uppercase tracking-widest flex items-center gap-2 [font-family:system-ui,sans-serif]">Cotizar mi logo <FaArrowRight/></p>
-               </div>
-            </Link>
-          </RevealOnScroll>
-
-          <RevealOnScroll direction="right" delay={400}>
-            <Link to="/productos" className="group relative h-72 rounded-2xl overflow-hidden bg-black shadow-lg block">
-               <img src={imgBurger} alt="Deco Neón" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-               <div className="absolute bottom-6 left-6">
-                  <h3 className="text-3xl font-black text-white tracking-wide mb-1 uppercase">Figuras</h3>
-                  <p className="text-yellow-400 font-bold text-xs uppercase tracking-widest flex items-center gap-2 [font-family:system-ui,sans-serif]">Ver catálogo <FaArrowRight/></p>
-               </div>
-            </Link>
-          </RevealOnScroll>
-
-        </div>
-      </div>
-
-      {/* ========================================= */}
-      {/* 3. ÚLTIMOS TRABAJOS (PORTFOLIO)           */}
-      {/* ========================================= */}
-      <div className="max-w-6xl mx-auto pb-20 px-4 relative z-20">
-        <RevealOnScroll direction="up" delay={0}>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div>
-              <h2 className="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                Últimos Trabajos
-              </h2>
-              <div className="w-16 h-1 bg-neon-blue mt-3"></div>
+          {/* Columna Izquierda: Copy y CTAs */}
+          <div>
+            <div className="inline-flex items-center gap-3 mb-6 text-cyan-400 font-['Orbitron'] text-xs font-semibold tracking-[0.19em]">
+              <span className="w-7 h-[1px] bg-cyan-400"></span> FABRICACIÓN NACIONAL DE ALTA GAMA
             </div>
-            <a href="https://www.instagram.com/neonflexpremium/" target="_blank" rel="noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-2 [font-family:system-ui,sans-serif]">
-              Ver en Instagram <FaArrowRight />
-            </a>
-          </div>
-        </RevealOnScroll>
 
-        {products.length === 0 ? (
-           <p className="text-gray-500 text-sm [font-family:system-ui,sans-serif]">Cargando portfolio...</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((prod, index) => (
-              <RevealOnScroll direction="up" delay={index * 150} key={prod.id}>
-                <div className="group cursor-pointer">
-                  <div className="bg-black rounded-xl overflow-hidden relative aspect-square mb-4 border border-gray-200 dark:border-neutral-800 shadow-md">
-                     <img src={prod.image_url} alt={prod.title} className="w-full h-full object-cover opacity-90 group-hover:scale-110 group-hover:opacity-100 transition-all duration-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-gray-900 dark:text-white font-black text-xl uppercase mb-1 line-clamp-1">{prod.title}</h3>
-                    <p className="text-gray-500 dark:text-neutral-400 text-xs mb-3 line-clamp-2 [font-family:system-ui,sans-serif]">{prod.description || 'Diseño personalizado en Neón LED'}</p>
-                    <Link to="/presupuesto" className="text-blue-600 dark:text-neon-blue font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity [font-family:system-ui,sans-serif]">
-                      Quiero algo así <FaArrowRight />
-                    </Link>
-                  </div>
-                </div>
-              </RevealOnScroll>
-            ))}
-          </div>
-        )}
-      </div>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white font-['Orbitron'] uppercase tracking-tight leading-[1.02] mb-6">
+              Luz que define<br />
+              <span className="text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">tu espacio.</span>
+            </h1>
 
-      {/* ========================================= */}
-      {/* 4. PROCESO INDUSTRIAL A MEDIDA            */}
-      {/* ========================================= */}
-      <div className="relative py-20 px-4 bg-neutral-950 overflow-hidden border-y border-neutral-900 z-20">
-        <div className="absolute inset-0 opacity-20">
-           <img src={imgAlas} alt="Taller Neon" className="w-full h-full object-cover blur-sm" />
-           <div className="absolute inset-0 bg-neutral-950/90"></div>
-        </div>
+            <p className="max-w-[520px] text-gray-400 text-lg sm:text-xl leading-relaxed mb-8 font-medium">
+              Creamos piezas de luz personalizadas que convierten cualquier ambiente en una experiencia inolvidable.
+            </p>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <RevealOnScroll direction="up" delay={0}>
-            <div className="mb-12 text-center">
-              <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
-                Hacemos tu idea <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-neon-red drop-shadow-[0_0_15px_rgba(255,0,0,0.5)]">realidad</span>
-              </h2>
-              <p className="text-neutral-400 mt-3 text-sm md:text-base [font-family:system-ui,sans-serif]">Proceso 100% personalizado, desde el boceto hasta tu pared.</p>
-            </div>
-          </RevealOnScroll>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <RevealOnScroll direction="up" delay={100}>
-              <div className="relative p-6 border border-neutral-800 bg-neutral-900/50 backdrop-blur-md rounded-2xl hover:border-neon-blue transition-colors group">
-                <span className="absolute -top-4 -right-2 text-8xl font-black text-white/5 group-hover:text-neon-blue/10 transition-colors pointer-events-none">1</span>
-                <h3 className="text-2xl font-black text-white uppercase mb-2 relative z-10">La Idea</h3>
-                <p className="text-neutral-400 text-xs leading-relaxed relative z-10 [font-family:system-ui,sans-serif]">Envianos tu logo, frase o dibujo junto con las medidas. Te pasamos la cotización en el día.</p>
-              </div>
-            </RevealOnScroll>
-
-            <RevealOnScroll direction="up" delay={250}>
-              <div className="relative p-6 border border-neutral-800 bg-neutral-900/50 backdrop-blur-md rounded-2xl hover:border-neon-red transition-colors group">
-                <span className="absolute -top-4 -right-2 text-8xl font-black text-white/5 group-hover:text-neon-red/10 transition-colors pointer-events-none">2</span>
-                <h3 className="text-2xl font-black text-white uppercase mb-2 relative z-10">Diseño</h3>
-                <p className="text-neutral-400 text-xs leading-relaxed relative z-10 [font-family:system-ui,sans-serif]">Con una seña del 50%, preparamos un render digital para que veas cómo quedará exactamente.</p>
-              </div>
-            </RevealOnScroll>
-
-            <RevealOnScroll direction="up" delay={400}>
-              <div className="relative p-6 border border-neutral-800 bg-neutral-900/50 backdrop-blur-md rounded-2xl hover:border-purple-500 transition-colors group">
-                <span className="absolute -top-4 -right-2 text-8xl font-black text-white/5 group-hover:text-purple-500/10 transition-colors pointer-events-none">3</span>
-                <h3 className="text-2xl font-black text-white uppercase mb-2 relative z-10">Taller</h3>
-                <p className="text-neutral-400 text-xs leading-relaxed relative z-10 [font-family:system-ui,sans-serif]">Cortamos el acrílico a láser y ensamblamos el neón a mano con precisión milimétrica.</p>
-              </div>
-            </RevealOnScroll>
-
-            <RevealOnScroll direction="up" delay={550}>
-              <div className="relative p-6 border border-neutral-800 bg-neutral-900/50 backdrop-blur-md rounded-2xl hover:border-green-500 transition-colors group">
-                <span className="absolute -top-4 -right-2 text-8xl font-black text-white/5 group-hover:text-green-500/10 transition-colors pointer-events-none">4</span>
-                <h3 className="text-2xl font-black text-white uppercase mb-2 relative z-10">Entrega</h3>
-                <p className="text-neutral-400 text-xs leading-relaxed relative z-10 [font-family:system-ui,sans-serif]">Te enviamos fotos del resultado final. Abonás el saldo y despachamos a todo el país.</p>
-              </div>
-            </RevealOnScroll>
-          </div>
-
-          <RevealOnScroll direction="up" delay={600}>
-            <div className="mt-10 text-center">
-              <Link to="/presupuesto" className="inline-flex items-center gap-2 bg-white text-black font-black py-3 px-8 rounded-full hover:scale-105 transition-transform uppercase tracking-widest text-xs [font-family:system-ui,sans-serif]">
-                 Cotizar Ahora <FaWhatsapp className="text-green-500 text-lg" />
+            <div className="flex flex-wrap gap-4 mb-12">
+              <Link to="/presupuesto" className="bg-cyan-400 hover:bg-white text-black font-bold px-7 py-3.5 rounded-sm transition-all text-xs tracking-widest uppercase flex items-center gap-3 shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+                COTIZAR MI DISEÑO <FaArrowRight size={12} />
+              </Link>
+              <Link to="/productos" className="border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white font-bold px-7 py-3.5 rounded-sm transition-all text-xs tracking-widest uppercase">
+                EXPLORAR CATÁLOGO
               </Link>
             </div>
-          </RevealOnScroll>
-        </div>
-      </div>
 
-      {/* ========================================= */}
-      {/* 5. ANATOMÍA DEL NEÓN (PROPORCIONES FINAS) */}
-      {/* ========================================= */}
-      <div className="py-20 px-4 bg-white dark:bg-neutral-950 transition-colors duration-300 relative z-20">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12 items-center">
-          
-          <RevealOnScroll direction="right" delay={0}>
-            <div className="w-full lg:w-full">
-              <span className="text-blue-600 dark:text-neon-blue font-bold uppercase tracking-widest text-[10px] md:text-xs mb-2 block [font-family:system-ui,sans-serif]">Calidad Constructiva</span>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white uppercase leading-[1.1] mb-10">
-                La Anatomía <br/> de un buen neón
-              </h2>
-
-              <div className="space-y-6">
-                 <div className="flex gap-4 items-start">
-                    <div className="mt-1 bg-gray-100 dark:bg-neutral-800 p-2 rounded-md text-gray-700 dark:text-gray-300 shadow-sm">
-                      <FaCheck size={12} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-lg text-gray-900 dark:text-white uppercase">Base de Acrílico</h4>
-                      <p className="text-gray-500 dark:text-neutral-400 text-xs mt-1 leading-relaxed [font-family:system-ui,sans-serif] max-w-md">Placas de 4mm de espesor, cortadas con láser de alta precisión. Son totalmente transparentes e irrompibles.</p>
-                    </div>
-                 </div>
-                 
-                 <div className="flex gap-4 items-start">
-                    <div className="mt-1 bg-gray-100 dark:bg-neutral-800 p-2 rounded-md text-gray-700 dark:text-gray-300 shadow-sm">
-                      <FaCheck size={12} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-lg text-gray-900 dark:text-white uppercase">LED 12V Premium</h4>
-                      <p className="text-gray-500 dark:text-neutral-400 text-xs mt-1 leading-relaxed [font-family:system-ui,sans-serif] max-w-md">Manguera de silicona que no levanta temperatura. Ultra bajo consumo eléctrico y más de 50.000 horas de vida útil real.</p>
-                    </div>
-                 </div>
-
-                 <div className="flex gap-4 items-start">
-                    <div className="mt-1 bg-gray-100 dark:bg-neutral-800 p-2 rounded-md text-gray-700 dark:text-gray-300 shadow-sm">
-                      <FaCheck size={12} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-lg text-gray-900 dark:text-white uppercase">Listo para Colgar</h4>
-                      <p className="text-gray-500 dark:text-neutral-400 text-xs mt-1 leading-relaxed [font-family:system-ui,sans-serif] max-w-md">Se entrega con fuente de alimentación a 220v, orificios de montaje, cable transparente y garantía de 6 meses.</p>
-                    </div>
-                 </div>
+            <div className="grid grid-cols-3 gap-4 max-w-[570px] pt-6 border-t border-white/10">
+              <div>
+                <strong className="text-white font-['Orbitron'] text-lg font-bold block">+500</strong>
+                <span className="text-[#737681] font-['Orbitron'] text-[9px] tracking-wider">PROYECTOS REALIZADOS</span>
+              </div>
+              <div className="pl-4 border-l border-white/10">
+                <strong className="text-white font-['Orbitron'] text-lg font-bold block">100%</strong>
+                <span className="text-[#737681] font-['Orbitron'] text-[9px] tracking-wider">DISEÑO A MEDIDA</span>
+              </div>
+              <div className="pl-4 border-l border-white/10">
+                <strong className="text-white font-['Orbitron'] text-lg font-bold block">24H</strong>
+                <span className="text-[#737681] font-['Orbitron'] text-[9px] tracking-wider">PROPUESTA VISUAL</span>
               </div>
             </div>
-          </RevealOnScroll>
+          </div>
 
-          <RevealOnScroll direction="left" delay={200}>
-            <div className="w-full max-w-md mx-auto relative px-4 md:px-0">
-               <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 rounded-[2rem] transform translate-x-4 translate-y-4 md:translate-x-5 md:translate-y-5"></div>
-               <img 
-                 src={imgLumi} 
-                 alt="Neón Lumi" 
-                 className="relative rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-neutral-800 w-full object-cover aspect-square md:aspect-[4/3] z-10"
-               />
+          {/* Columna Derecha: Showcase Interactivo */}
+          <div className="relative bg-[#0a0a0f] border border-white/10 p-4 shadow-2xl">
+            <div className="flex justify-between items-center text-[9px] font-['Orbitron'] tracking-widest text-gray-500 mb-2 px-1">
+              <span>FEATURED / 0{activeHero + 1}</span>
+              <span className="text-cyan-400 flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> LIVE</span>
             </div>
-          </RevealOnScroll>
+
+            <div className="relative h-[400px] sm:h-[450px] bg-black overflow-hidden mb-3 border border-white/5">
+              <img src={heroFeatures[activeHero].image} alt="Showcase Neón" className="w-full h-full object-cover filter saturate-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+              
+              <div className="absolute left-6 bottom-6 border-l-2 border-cyan-400 pl-3">
+                <small className="text-gray-400 text-xs tracking-widest uppercase block mb-1">{heroFeatures[activeHero].spec}</small>
+                <strong className="text-white font-['Orbitron'] text-base tracking-wider uppercase">{heroFeatures[activeHero].name}</strong>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              {heroFeatures.map((feat, idx) => (
+                <button 
+                  key={feat.name}
+                  onClick={() => setActiveHero(idx)}
+                  className={`flex items-center gap-2 p-1.5 border text-left transition-all ${activeHero === idx ? 'border-cyan-400 bg-white/5' : 'border-white/10 bg-[#0d0d13] opacity-60 hover:opacity-100'}`}
+                >
+                  <img src={feat.image} alt="" className="w-10 h-8 object-cover" />
+                  <span className="text-[9px] font-['Orbitron'] tracking-wider overflow-hidden">
+                    <span className="text-cyan-400 block">0{idx + 1}</span>
+                    <span className="text-white truncate block">{feat.name}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
 
         </div>
-      </div>
+      </section>
+
+      {/* ========================================= */}
+      {/* 2. CATÁLOGO / DESTACADOS                  */}
+      {/* ========================================= */}
+      <section className="py-20 px-4 md:px-12 max-w-[1380px] mx-auto border-t border-white/10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+          <div>
+            <p className="text-cyan-400 font-['Orbitron'] text-xs font-semibold tracking-[0.2em] mb-2 flex items-center gap-2">
+              <span className="w-6 h-[1px] bg-cyan-400"></span> CATÁLOGO DESTACADO
+            </p>
+            <h2 className="text-3xl sm:text-5xl font-black text-white font-['Orbitron'] uppercase tracking-tight">
+              Elegí tu <span className="text-cyan-400">neón</span>
+            </h2>
+          </div>
+          <p className="text-gray-400 text-sm">Modelos listos para transformar tu espacio. ¿Tenés otra idea? La hacemos realidad.</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {productsMock.map((prod, index) => (
+            <div key={prod.name} className="bg-[#111117] border border-white/10 rounded-sm overflow-hidden group hover:border-cyan-400/50 transition-all">
+              <div className="relative aspect-square bg-black overflow-hidden">
+                <img src={prod.image} alt={prod.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                {prod.tag && (
+                  <span className="absolute top-3 left-3 bg-cyan-400 text-black text-[9px] font-bold font-['Orbitron'] px-2 py-1 tracking-widest">
+                    {prod.tag}
+                  </span>
+                )}
+              </div>
+              <div className="p-5">
+                <p className="text-xs text-gray-400 mb-1">{prod.detail}</p>
+                <h3 className="text-white font-['Orbitron'] font-bold text-base tracking-wide uppercase group-hover:text-cyan-400 transition-colors">
+                  {prod.name}
+                </h3>
+                <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10">
+                  <span className="text-white font-['Orbitron'] font-black text-lg">{prod.price}</span>
+                  <div className="flex gap-2">
+                    <a href={`${waLink}%20${encodeURIComponent(prod.name)}`} target="_blank" rel="noreferrer" className="bg-cyan-400 text-black px-3 py-2 text-[10px] font-bold font-['Orbitron'] tracking-wider flex items-center gap-1.5 hover:bg-white transition-colors">
+                      <FaShoppingBag size={12} /> COMPRAR
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link to="/productos" className="inline-flex items-center gap-3 text-white font-bold font-['Orbitron'] text-xs tracking-widest border-b border-cyan-400 pb-1 hover:text-cyan-400 transition-colors">
+            VER TODOS LOS PRODUCTOS <FaArrowRight size={12} />
+          </Link>
+        </div>
+      </section>
+
+      {/* ========================================= */}
+      {/* 3. SECCIÓN PERSONALIZADOS / PRESUPUESTO   */}
+      {/* ========================================= */}
+      <section className="bg-[#111117] border-y border-white/10 py-20 px-4 md:px-12">
+        <div className="max-w-[1380px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          <div className="relative aspect-[4/3] bg-black border border-white/10 overflow-hidden">
+            <img src={imgLumi} alt="Custom Neon" className="w-full h-full object-cover filter contrast-110" />
+            <div className="absolute bottom-0 right-0 bg-cyan-400 text-black px-4 py-2 font-['Orbitron'] font-black text-xs tracking-widest">
+              Nº 500+ PROYECTOS
+            </div>
+          </div>
+
+          <div>
+            <p className="text-cyan-400 font-['Orbitron'] text-xs font-semibold tracking-[0.2em] mb-2">TU DISEÑO. NUESTRA TÉCNICA.</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-white font-['Orbitron'] uppercase tracking-tight mb-6">
+              ¿Tenés una idea?<br /><span className="text-cyan-400">Hagámosla brillar.</span>
+            </h2>
+            <p className="text-gray-400 text-base mb-8 leading-relaxed">
+              Nos mandás tu frase, logo o referencia. Nuestro equipo la convierte en un diseño listo para producir, sin costo y sin compromiso.
+            </p>
+
+            <ol className="space-y-4 mb-8">
+              <li className="flex items-start gap-4 p-3 border border-white/5 bg-black/40">
+                <span className="text-cyan-400 font-['Orbitron'] font-black text-sm">01</span>
+                <div>
+                  <b className="text-white font-['Orbitron'] text-xs tracking-wider block mb-0.5">CONTANOS TU IDEA</b>
+                  <small className="text-gray-400 text-xs">Compartí texto, tamaño y color por WhatsApp.</small>
+                </div>
+              </li>
+              <li className="flex items-start gap-4 p-3 border border-white/5 bg-black/40">
+                <span className="text-cyan-400 font-['Orbitron'] font-black text-sm">02</span>
+                <div>
+                  <b className="text-white font-['Orbitron'] text-xs tracking-wider block mb-0.5">RECIBÍ TU DISEÑO</b>
+                  <small className="text-gray-400 text-xs">Te enviamos un mockup digital en menos de 24 h.</small>
+                </div>
+              </li>
+              <li className="flex items-start gap-4 p-3 border border-white/5 bg-black/40">
+                <span className="text-cyan-400 font-['Orbitron'] font-black text-sm">03</span>
+                <div>
+                  <b className="text-white font-['Orbitron'] text-xs tracking-wider block mb-0.5">LO HACEMOS REAL</b>
+                  <small className="text-gray-400 text-xs">Producimos y enviamos tu cartel listo para instalar.</small>
+                </div>
+              </li>
+            </ol>
+
+            <a href={waLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-cyan-400 hover:bg-white text-black font-bold px-8 py-4 rounded-sm text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+              <FaWhatsapp size={16} /> PEDIR PRESUPUESTO
+            </a>
+          </div>
+
+        </div>
+      </section>
 
     </div>
   );

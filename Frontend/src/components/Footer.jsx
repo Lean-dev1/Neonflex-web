@@ -4,105 +4,118 @@ import { FaInstagram, FaWhatsapp, FaMapMarkerAlt, FaEnvelope, FaArrowRight } fro
 
 const Footer = () => {
   return (
-    <footer className="bg-white dark:bg-neutral-950 border-t border-gray-200 dark:border-neutral-900 pt-16 pb-8 text-gray-600 dark:text-neutral-400 font-sans transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap');
+      `}</style>
 
-        {/* --- FILA SUPERIOR: Marca y Newsletter --- */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-gray-200 dark:border-neutral-800 pb-12">
-           <div>
-              <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-widest uppercase mb-2 hover:scale-105 transition-transform inline-block">
-                Neon<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-red-600 dark:from-neon-blue dark:to-neon-red">Flex</span>
-              </h2>
-              <p className="font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-widest text-sm">
-                Fabricantes de Neón Premium
-              </p>
-           </div>
-           
-           {/* Formulario de Suscripción (Da muchísima presencia de marca) */}
-           <div className="w-full md:w-auto">
-              <p className="text-gray-900 dark:text-white font-bold uppercase tracking-widest text-sm mb-3">Enterate de nuevos diseños</p>
-              <div className="flex relative w-full md:w-96 shadow-sm">
-                 <input 
-                    type="email" 
-                    placeholder="Tu correo electrónico" 
-                    className="w-full bg-gray-50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-l-lg py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:border-blue-600 dark:focus:border-neon-blue transition-colors placeholder:text-gray-400 dark:placeholder:text-neutral-600" 
-                 />
-                 <button className="bg-gray-900 dark:bg-white text-white dark:text-neutral-900 px-6 rounded-r-lg font-black hover:bg-blue-700 dark:hover:bg-neon-blue dark:hover:text-white transition-colors flex items-center justify-center">
-                    <FaArrowRight />
-                 </button>
+      <footer className="bg-[#050508] border-t border-white/10 pt-16 pb-8 text-gray-400 font-['Rajdhani']">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* --- FILA SUPERIOR: Marca y Newsletter --- */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-white/10 pb-12">
+            <div>
+              <Link to="/" className="flex items-center gap-1 font-['Orbitron'] mb-2 hover:opacity-80 transition-opacity inline-flex">
+                <span className="text-3xl font-black text-white tracking-widest">Neon</span>
+                <span className="text-3xl font-black text-cyan-400 tracking-widest">FlexPremium </span>
+              </Link>
+            </div>
+            
+            {/* Formulario de Suscripción */}
+            <div className="w-full md:w-auto">
+              <p className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-3">Enterate de nuevos diseños</p>
+              <div className="flex relative w-full md:w-96">
+                <input 
+                  type="email" 
+                  placeholder="Tu correo electrónico" 
+                  className="w-full bg-white/5 border border-white/10 rounded-l-sm py-3 px-4 text-white focus:outline-none focus:border-cyan-400/50 transition-colors placeholder:text-gray-600 text-sm" 
+                />
+                <button className="bg-cyan-500/10 border border-cyan-500/20 border-l-0 text-cyan-400 px-6 rounded-r-sm font-bold hover:bg-cyan-500 hover:text-[#050508] transition-colors flex items-center justify-center">
+                  <FaArrowRight size={14} />
+                </button>
               </div>
-           </div>
-        </div>
-
-        {/* --- FILA CENTRAL: Enlaces y Contacto --- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-          
-          {/* Info y Redes */}
-          <div className="md:col-span-1">
-            <p className="text-sm leading-relaxed mb-6 font-medium">
-              Transformamos espacios con cartelería LED personalizada de alta gama. Diseño y fabricación propia con materiales 100% importados.
-            </p>
-            <div className="flex gap-4">
-              <a href="https://www.instagram.com/neonflexpremium/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-900 flex items-center justify-center text-gray-600 dark:text-neutral-400 hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all shadow-sm">
-                <FaInstagram size={20} />
-              </a>
-              <a href="https://wa.me/5491164477337" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-900 flex items-center justify-center text-gray-600 dark:text-neutral-400 hover:bg-green-500 hover:text-white dark:hover:bg-green-500 dark:hover:text-white transition-all shadow-sm">
-                <FaWhatsapp size={20} />
-              </a>
             </div>
           </div>
 
-          {/* Columna Tienda */}
-          <div>
-            <h3 className="text-gray-900 dark:text-white font-black uppercase tracking-widest text-sm mb-6">Tienda</h3>
-            <ul className="space-y-4 text-sm font-bold">
-              <li><Link to="/productos" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Ver Catálogo</Link></li>
-              <li><Link to="/presupuesto" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Cotizador Online</Link></li>
-              <li><Link to="/nosotros" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Nuestro Taller</Link></li>
-            </ul>
+          {/* --- FILA CENTRAL: Enlaces y Contacto --- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            
+            {/* Info y Redes */}
+            <div className="md:col-span-1">
+              <p className="text-sm leading-relaxed mb-6 font-medium text-gray-400">
+                Transformamos espacios con cartelería LED personalizada de alta gama. Diseño y fabricación propia con materiales 100% importados.
+              </p>
+              <div className="flex gap-3">
+                <a 
+                  href="https://www.instagram.com/neonflexpremium/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                >
+                  <FaInstagram size={18} />
+                </a>
+                <a 
+                  href="https://wa.me/5491164477337" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:border-green-500/50 hover:text-green-500 transition-colors"
+                >
+                  <FaWhatsapp size={18} />
+                </a>
+              </div>
+            </div>
+
+            {/* Columna Tienda */}
+            <div>
+              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Tienda</h3>
+              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
+                <li><Link to="/productos" className="hover:text-cyan-400 transition-colors">Ver Catálogo</Link></li>
+                <li><Link to="/presupuesto" className="hover:text-cyan-400 transition-colors">Cotizador Online</Link></li>
+                <li><Link to="/nosotros" className="hover:text-cyan-400 transition-colors">Nuestro Taller</Link></li>
+              </ul>
+            </div>
+
+            {/* Columna Ayuda */}
+            <div>
+              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Ayuda</h3>
+              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Preguntas Frecuentes</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Envíos y Entregas</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Garantía Escrita</a></li>
+              </ul>
+            </div>
+
+            {/* Columna Contacto */}
+            <div>
+              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Contacto</h3>
+              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
+                <li className="flex items-start gap-3">
+                  <FaMapMarkerAlt className="mt-0.5 text-gray-500" size={14} />
+                  <span>Adrogué, Buenos Aires<br/><span className="text-xs text-gray-600 font-normal normal-case tracking-normal">Argentina</span></span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <FaWhatsapp className="text-gray-500" size={14} />
+                  <span>+54 9 11 6447-7337</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <FaEnvelope className="text-gray-500" size={14} />
+                  <span className="normal-case tracking-normal">ventas@neonflex.com.ar</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* Columna Ayuda (Validadores de confianza) */}
-          <div>
-            <h3 className="text-gray-900 dark:text-white font-black uppercase tracking-widest text-sm mb-6">Ayuda</h3>
-            <ul className="space-y-4 text-sm font-bold">
-              <li><a href="#" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Preguntas Frecuentes</a></li>
-              <li><a href="#" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Envíos y Entregas</a></li>
-              <li><a href="#" className="hover:text-blue-600 dark:hover:text-neon-blue transition-colors">Garantía Escrita</a></li>
-            </ul>
+          {/* --- FILA INFERIOR: Copyright y Admin --- */}
+          <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-8 text-xs font-bold uppercase tracking-widest text-gray-600">
+            <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} NeonFlexPremium. Todos los derechos reservados.</p>
+            <div className="flex gap-6">
+              <Link to="/admin" className="hover:text-gray-400 transition-colors">Acceso Interno</Link>
+            </div>
           </div>
 
-          {/* Columna Contacto */}
-          <div>
-            <h3 className="text-gray-900 dark:text-white font-black uppercase tracking-widest text-sm mb-6">Contacto</h3>
-            <ul className="space-y-4 text-sm font-bold">
-              <li className="flex items-start gap-3">
-                <FaMapMarkerAlt className="mt-1 text-gray-400 dark:text-neutral-500" />
-                <span>Adrogué, Buenos Aires<br/><span className="text-xs text-gray-400 font-normal">Argentina</span></span>
-              </li>
-              <li className="flex items-center gap-3">
-                <FaWhatsapp className="text-gray-400 dark:text-neutral-500" />
-                <span>+54 9 11 6447-7337</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <FaEnvelope className="text-gray-400 dark:text-neutral-500" />
-                <span>ventas@neonflex.com.ar</span>
-              </li>
-            </ul>
-          </div>
         </div>
-
-        {/* --- FILA INFERIOR: Copyright y Admin --- */}
-        <div className="flex flex-col md:flex-row justify-between items-center border-t border-gray-200 dark:border-neutral-900 pt-8 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-600">
-          <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} Neon Flex. Todos los derechos reservados.</p>
-          <div className="flex gap-6">
-             {/* Link de admin camuflado de forma elegante */}
-            <Link to="/admin" className="hover:text-gray-900 dark:hover:text-white transition-colors">Acceso Interno</Link>
-          </div>
-        </div>
-
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 };
 

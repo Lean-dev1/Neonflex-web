@@ -8,7 +8,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Si hay token, te deja pasar (renderiza la ruta hija)
+  // Si hay token, te deja pasar 
   return <Outlet />;
 };
 

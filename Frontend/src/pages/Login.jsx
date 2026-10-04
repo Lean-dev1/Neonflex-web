@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FaLock, FaUser, FaArrowLeft } from 'react-icons/fa';
 
 const Login = () => {
-  // Inicializamos los campos vacíos para que no queden pre-cargados al subir a producción
+  
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await api.post('/auth/login', form);
-      // Guardamos el token en el navegador
+      
       localStorage.setItem('token', res.data.token);
       navigate('/admin');
     } catch (err) {

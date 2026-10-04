@@ -24,12 +24,12 @@ function WhatsAppIcon() { return <svg viewBox="0 0 24 24" fill="none" className=
 export default function Presupuesto() {
   const [projectType, setProjectType] = useState("Frase");
   
-  // Ahora es un array para permitir múltiples colores
+  
   const [selectedColors, setSelectedColors] = useState([colors[4].value]); 
   
   const [letterStyle, setLetterStyle] = useState("Cursiva");
   const [fileName, setFileName] = useState("");
-  const [fileObjeto, setFileObjeto] = useState(null); // Guardamos el archivo físico
+  const [fileObjeto, setFileObjeto] = useState(null); 
   
   const [terminosAceptados, setTerminosAceptados] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,13 +39,12 @@ export default function Presupuesto() {
     ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: ""
   });
 
-  // Lógica para seleccionar y deseleccionar múltiples colores
   const toggleColor = (colorValue) => {
     setSelectedColors((prev) => {
       if (prev.includes(colorValue)) {
-        return prev.filter((c) => c !== colorValue); // Si ya está, lo saca
+        return prev.filter((c) => c !== colorValue); 
       } else {
-        return [...prev, colorValue]; // Si no está, lo agrega
+        return [...prev, colorValue]; 
       }
     });
   };
@@ -76,37 +75,42 @@ export default function Presupuesto() {
     setLoading(true);
     setFeedback({ type: '', message: '' });
 
-    // Traducimos los códigos hexadecimales a los nombres legibles
     const colorNames = selectedColors
       .map(hex => colors.find(c => c.value === hex)?.name)
       .join(" + ");
 
-    // Creamos un FormData (Obligatorio para enviar archivos por internet)
-    const payload = new FormData();
-    payload.append('nombre', formData.nombre);
-    payload.append('email', formData.email);
-    payload.append('telefono', formData.telefono);
-    payload.append('projectType', projectType);
-    payload.append('ideaText', formData.ideaText);
-    payload.append('colores', colorNames);
-    payload.append('estilo', letterStyle);
-    payload.append('ancho', formData.ancho);
-    payload.append('alto', formData.alto);
-
-    // Adjuntamos la foto si el usuario subió una
-    if (fileObjeto && projectType === "Logo") {
-      payload.append('attachment', fileObjeto);
-    }
-
     try {
-      // Importante: al pasar FormData, Axios ajusta el Content-Type automáticamente a multipart/form-data
-      await api.post('/cotizaciones/enviar', payload, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      
+      let attachmentData = null;
+      if (fileObjeto && projectType === "Logo") {
+        attachmentData = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(fileObjeto);
+          reader.onload = () => resolve({ name: fileObjeto.name, data: reader.result });
+          reader.onerror = error => reject(error);
+        });
+      }
+
+     
+      const payload = {
+        nombre: formData.nombre,
+        email: formData.email,
+        telefono: formData.telefono,
+        projectType,
+        ideaText: formData.ideaText,
+        colores: colorNames,
+        estilo: letterStyle,
+        ancho: formData.ancho,
+        alto: formData.alto,
+        attachment: attachmentData
+      };
+
+      
+      await api.post('/cotizaciones/enviar', payload);
       
       setFeedback({ type: 'success', message: '¡Solicitud enviada exitosamente! Revisá tu correo.' });
       
-      // Limpieza
+     
       setFormData({ ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: "" });
       setSelectedColors([colors[4].value]);
       setFileObjeto(null);
@@ -114,6 +118,7 @@ export default function Presupuesto() {
       setTerminosAceptados(false);
     } catch (error) {
       setFeedback({ type: 'error', message: 'Error al enviar. Intenta de nuevo o escribinos al WhatsApp.' });
+      console.error(error);
     } finally {
       setLoading(false);
     }

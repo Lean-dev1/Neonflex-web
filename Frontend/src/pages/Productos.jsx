@@ -7,9 +7,7 @@ const categories = ["Todos", "Frases", "Figuras", "Negocios"];
 const sortOptions = ["Novedades", "Menor precio", "Mayor precio"];
 const waLink = "https://wa.me/5491164477337";
 
-// -------------------------------------------------------------
-// Componente Iconos SVG
-// -------------------------------------------------------------
+
 function Icon({ name, size = 18 }) {
   const paths = {
     arrow: <path d="M5 12h13M13 7l5 5-5 5" />,
@@ -37,9 +35,7 @@ function Icon({ name, size = 18 }) {
   );
 }
 
-// -------------------------------------------------------------
-// Componente Tarjeta de Producto (Compacto y Optimizado)
-// -------------------------------------------------------------
+
 function ProductCard({ product }) {
   const formattedPrice = Math.round(product.price).toLocaleString("es-AR");
   const message = encodeURIComponent(`Hola NeonFlexPremium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);
@@ -97,9 +93,7 @@ function ProductCard({ product }) {
   );
 }
 
-// -------------------------------------------------------------
-// MAIN COMPONENT: Productos
-// -------------------------------------------------------------
+
 export default function Productos() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,7 +139,7 @@ export default function Productos() {
 
       <div className="relative text-gray-300 font-['Rajdhani'] min-h-screen selection:bg-cyan-400 selection:text-black">
         
-        {/* FONDO OPTIMIZADO PARA ALTO RENDIMIENTO */}
+       
         <div 
           className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${bgLadrillos})` }}
@@ -159,7 +153,7 @@ export default function Productos() {
         <div className="relative z-10 pt-24 pb-20">
           <section className="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
             
-            {/* ASIDE: Filtros y Buscador */}
+          
             <aside className="sticky top-28 hidden lg:flex flex-col gap-6">
               
               <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/5">
@@ -235,7 +229,7 @@ export default function Productos() {
               </div>
             </aside>
 
-            {/* CONTENIDO: Resultados y Grilla */}
+           
             <div className="flex flex-col w-full">
               
               <div className="lg:hidden mb-6 flex flex-col gap-4">

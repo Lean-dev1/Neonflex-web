@@ -8,7 +8,7 @@ const Admin = () => {
   const [editingId, setEditingId] = useState(null);
   const [publishType, setPublishType] = useState('stock'); 
 
-  // Se agregó 'medidas' al estado inicial
+  
   const [form, setForm] = useState({ title: '', price: '', description: '', medidas: '' });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const Admin = () => {
       title: product.title, 
       price: product.price, 
       description: product.description || '',
-      medidas: product.medidas || '' // Carga la medida si existe en la base
+      medidas: product.medidas || '' 
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

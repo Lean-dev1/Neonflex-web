@@ -86,10 +86,10 @@ const Home = () => {
 
         <div className="relative z-10">
           
-          {/* ========================================= */}
-          {/* 1. HERO CIBERPUNK                         */}
-          {/* ========================================= */}
-          {/* Reducimos el padding vertical y el max-width a 1200px */}
+         
+          {/*HERO CIBERPUNK */}
+          
+          
           <section className="relative pt-28 pb-10 px-4 md:px-8 w-full max-w-[1200px] mx-auto overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-6 items-center">
               
@@ -101,12 +101,12 @@ const Home = () => {
                    </p>
                 </div>
                 
-                {/* Título más proporcionado */}
+                
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-['Orbitron'] uppercase tracking-tight mb-5 leading-[1.1]">
                   Convertimos tus ideas <br/><span className="text-cyan-400 drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]">en realidad.</span>
                 </h2>
                 
-                {/* Texto descriptivo un poco más chico */}
+                
                 <p className="text-gray-400 text-xs sm:text-sm md:text-base font-medium mb-8 leading-relaxed max-w-md">
                    Carteles de Neon Flex y letras corporeas
                 </p>
@@ -151,10 +151,10 @@ const Home = () => {
            
           </section>
 
-          {/* ========================================= */}
-          {/* 2. CARRUSEL NOVEDADES                     */}
-          {/* ========================================= */}
-          {/* Reducimos el padding py-24 a py-16 */}
+          
+          {/* CARRUSEL NOVEDADES*/}
+         
+          
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto border-t border-white/10 bg-[#0a0a0f]/40 backdrop-blur-sm overflow-hidden">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 relative z-10">
               <div>
@@ -225,9 +225,7 @@ const Home = () => {
             </div>
           </section>
 
-          {/* ========================================= */}
-          {/* 3. SECCIÓN PERSONALIZADOS / PRESUPUESTO   */}
-          {/* ========================================= */}
+          
           <section className="bg-[#111117]/60 backdrop-blur-md border-y border-white/5 py-16 px-4 md:px-8">
             <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div className="relative aspect-[4/3] bg-black border border-white/10 rounded-sm overflow-hidden group shadow-2xl">

@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaInstagram, FaWhatsapp, FaMapMarkerAlt, FaEnvelope, FaArrowRight } from 'react-icons/fa';
 
-// 1. IMPORTAMOS EL LOGO (Ajustá la ruta y el nombre del archivo según corresponda en tu proyecto)
 import logo from '../assets/images/neon.png'; 
 
 const Footer = () => {
@@ -12,14 +11,14 @@ const Footer = () => {
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@500;700;900&display=swap');
       `}</style>
 
-      {/* Fondo negro absoluto para anclar el final de la página */}
+      {/* Fondo negro  */}
       <footer className="relative z-20 bg-[#050508] border-t border-white/5 pt-16 pb-8 text-gray-400 font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* --- FILA SUPERIOR: Marca y Newsletter --- */}
+          
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-white/5 pb-12">
             
-            {/* 2. REEMPLAZAMOS EL TEXTO POR LA ETIQUETA IMG DEL LOGO */}
+            
             <div>
               <Link to="/" className="flex items-center mb-2 hover:opacity-80 transition-opacity">
                 <img 
@@ -46,7 +45,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* --- FILA CENTRAL: Enlaces y Contacto --- */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-16">
             
             {/* Info y Redes */}
@@ -114,7 +113,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* --- FILA INFERIOR: Copyright y Admin --- */}
+          {/*  FILA INFERIOR: Copyright y Admin  */}
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600">
             <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} NeonFlexPremium. Todos los derechos reservados.</p>
             <p className="mb-4 md:mb-0">Desarrollado por Leandro Jerez & Faustina Retamar[cite: 7]</p>

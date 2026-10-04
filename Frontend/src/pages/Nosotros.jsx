@@ -1,9 +1,7 @@
 import React from 'react';
 import bgLadrillos from '../assets/images/fondo.png';
 
-// -------------------------------------------------------------
-// Componente Iconos SVG
-// -------------------------------------------------------------
+
 function HeartIcon({ className }) {
   return (
     <svg viewBox="0 0 32 32" fill="none" className={className} aria-hidden="true">
@@ -32,9 +30,7 @@ function ToolsIcon({ className }) {
   );
 }
 
-// -------------------------------------------------------------
-// Componente Tarjeta de Valor
-// -------------------------------------------------------------
+
 function ValueCard({ number, icon, title, children }) {
   return (
     <article className="bg-[#111117]/80 backdrop-blur-md border border-white/5 p-8 rounded-sm group hover:border-cyan-400/30 transition-colors">
@@ -49,9 +45,7 @@ function ValueCard({ number, icon, title, children }) {
   );
 }
 
-// -------------------------------------------------------------
-// MAIN COMPONENT: Nosotros
-// -------------------------------------------------------------
+
 const workshopImage = "https://images.unsplash.com/photo-1778582384724-d6ce1dfe6df1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZW9uJTIwc2lnbiUyMHdvcmtzaG9wJTIwaW5kdXN0cmlhbCUyMGRhcmslMjBjcmFmdHNtYW58ZW58MXx8fHwxNzkxMDAxMDY1fDA&ixlib=rb-4.1.0&q=85&w=1600";
 
 export default function Nosotros() {
@@ -63,9 +57,7 @@ export default function Nosotros() {
 
       <main className="relative min-h-screen text-white font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
         
-        {/* ========================================= */}
-        {/* FONDO: Pared oscura optimizada (z-0)      */}
-        {/* ========================================= */}
+        
         <div 
           className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${bgLadrillos})` }}
@@ -76,12 +68,9 @@ export default function Nosotros() {
           <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,0,0,0.06)_0%,transparent_70%)] pointer-events-none"></div>
         </div>
 
-        {/* ========================================= */}
-        {/* CONTENIDO PRINCIPAL (relative z-10)       */}
-        {/* ========================================= */}
         <div className="relative z-10 pt-24 pb-20">
           
-          {/* --- SECCIÓN HISTORIA --- */}
+         
           <section className="mx-auto grid max-w-[1440px] gap-14 px-4 pb-24 pt-16 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20 md:px-8">
             <div>
               <div className="mb-7 flex items-center gap-4">
@@ -108,7 +97,7 @@ export default function Nosotros() {
               </blockquote>
             </div>
 
-            {/* Imagen Taller */}
+           
             <figure className="relative mx-auto w-full max-w-[570px] bg-[#111117]/80 backdrop-blur-md p-2 border border-white/5 rounded-sm shadow-2xl lg:mx-0 group">
               <div className="relative aspect-[4/4.7] overflow-hidden rounded-sm">
                 <img
@@ -130,7 +119,7 @@ export default function Nosotros() {
             </figure>
           </section>
 
-          {/* --- SECCIÓN VALORES --- */}
+          
           <section className="relative border-t border-white/10 px-4 py-24 md:px-8">
             <div className="mx-auto max-w-[1440px]">
               

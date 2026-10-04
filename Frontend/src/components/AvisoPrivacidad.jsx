@@ -36,7 +36,7 @@ const AvisoPrivacidad = () => {
       {/* Ventana modal centrada */}
       <div className="bg-[#0a0a0f] border border-white/10 p-8 rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.8)] max-w-md w-full font-['Rajdhani'] text-center relative overflow-hidden">
         
-        {/* Luz de fondo sutil */}
+        {/* Luz de fondo  */}
         <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[200px] h-[100px] bg-cyan-500/20 blur-[50px] pointer-events-none"></div>
 
         <div className="flex justify-center mb-5 relative z-10">

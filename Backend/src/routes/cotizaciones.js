@@ -1,14 +1,12 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
-import multer from 'multer'; 
 
 const router = express.Router();
 
-const upload = multer({ storage: multer.memoryStorage() });
-router.post('/enviar', upload.single('attachment'), async (req, res) => {
-  const { nombre, email, telefono, projectType, ideaText, colores, estilo, ancho, alto } = req.body;
-  const file = req.file;
+router.post('/enviar', async (req, res) => {
+  const { nombre, email, telefono, projectType, ideaText, colores, estilo, ancho, alto, attachment } = req.body;
 
+ 
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -45,16 +43,15 @@ router.post('/enviar', upload.single('attachment'), async (req, res) => {
           <p style="margin: 0 0 10px 0;"><strong style="color: #00f0ff;">Colores:</strong> ${colores}</p>
           <p style="margin: 0;"><strong style="color: #00f0ff;">Medidas Aprox:</strong> ${ancho}cm x ${alto}cm</p>
         </div>
-
-        ${file ? `<p style="color: #43e77d; font-size: 13px; text-align: center; margin-top: 20px;">📎 El cliente adjuntó una imagen (Revisar archivos adjuntos).</p>` : ''}
       </div>
     `;
+
     const mailOptions = {
       from: `"NeonFlex Web" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
-      subject: `Cotización Web: ${nombre} - ${projectType}`,
+      subject: `Cotización: ${nombre} - ${projectType}`,
       html: htmlEmail,
-      attachments: file ? [{ filename: file.originalname, content: file.buffer }] : []
+      attachments: attachment ? [{ filename: attachment.name, path: attachment.data }] : []
     };
 
     await transporter.sendMail(mailOptions);
@@ -62,7 +59,7 @@ router.post('/enviar', upload.single('attachment'), async (req, res) => {
     
   } catch (error) {
     console.error('Error enviando correo:', error);
-    res.status(500).json({ message: 'Error al intentar enviar su cotizacion' });
+    res.status(500).json({ message: 'Error interno al intentar enviar el correo' });
   }
 });
 

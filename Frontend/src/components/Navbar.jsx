@@ -38,7 +38,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  // Forzamos el modo oscuro por defecto
+  
   useEffect(() => {
     document.documentElement.classList.add('dark');
     localStorage.theme = 'dark';
@@ -49,7 +49,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Importamos la misma fuente que en Productos */}
+      
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
       `}</style>
@@ -115,7 +115,7 @@ export default function Navbar() {
                 Contáctanos
               </a>
 
-              {/* Botón Hamburguesa Móvil */}
+              
               <div className="flex items-center md:hidden">
                 <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-white focus:outline-none transition-colors">
                   <span className="absolute -inset-0.5" />
@@ -150,7 +150,7 @@ export default function Navbar() {
             })}
           </div>
           <div className="px-4 pb-6 pt-2">
-             {/* Botón WhatsApp Móvil (Sin animación exagerada) */}
+             {/* Botón WhatsApp Móvil  */}
              <a 
                 href="https://wa.me/5491164477337?text=Hola! Estaba viendo la web y quiero hacer una consulta..." 
                 target="_blank" 

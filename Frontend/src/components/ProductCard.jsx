@@ -2,19 +2,12 @@ import React from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
-  // Con esta funcion redirigimos al WhatsApp con un mensaje pre-armado
   const handleConsultar = () => {
     const mensaje = `Hola! Estoy interesado en el cartel "${product.title}" que vi en la web.`;
     const url = `https://wa.me/54911XXXXXXXX?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
   };
 
-  // -------------------------------------------------------------
-// Componente Tarjeta de Producto (Tamaño Optimizado)
-// -------------------------------------------------------------
-// -------------------------------------------------------------
-// Componente Tarjeta de Producto (Tamaño Optimizado)
-// -------------------------------------------------------------
 function ProductCard({ product }) {
   const formattedPrice = Math.round(product.price).toLocaleString("es-AR");
   const message = encodeURIComponent(`Hola NeonFlexPremium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);

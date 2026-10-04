@@ -1,227 +1,318 @@
-import React, { useState } from 'react';
-import { FaWhatsapp, FaRulerHorizontal, FaRulerVertical, FaPalette, FaFont, FaImage, FaPaperPlane, FaCloudUploadAlt } from 'react-icons/fa';
+import React, { useState } from "react";
+import bgLadrillos from '../assets/images/fondo.png';
+import api from '../api/axios';
 
-import bgImage from '../assets/images/neon.jpg';
+const colors = [
+  { name: "Blanco frío", value: "#f4fbff" },
+  { name: "Blanco cálido", value: "#fff0c2" },
+  { name: "Rojo", value: "#ff3b3b" },
+  { name: "Azul", value: "#2864ff" },
+  { name: "Celeste", value: "#00d9ff" },
+  { name: "Verde", value: "#34e86f" },
+  { name: "Rosa", value: "#ff3cac" },
+  { name: "Amarillo", value: "#ffe52f" },
+  { name: "Naranja", value: "#ff7a1a" },
+  { name: "Violeta", value: "#a855f7" },
+];
 
-const Presupuesto = () => {
+const waLink = "https://wa.me/5491164477337";
+
+function ArrowIcon() { return <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5"><path d="M4 10h11M11 6l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function CheckIcon() { return <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5"><path d="m4.5 10 3.25 3.25L15.5 5.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function WhatsAppIcon() { return <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6"><path d="M20.5 11.8a8.48 8.48 0 0 1-8.6 8.35 8.72 8.72 0 0 1-4.1-1.03L3.5 20.5l1.4-4.08a8.15 8.15 0 0 1-1.12-4.14A8.48 8.48 0 0 1 12.38 4a8.48 8.48 0 0 1 8.12 7.8Z" stroke="currentColor" strokeWidth="1.6"/><path d="M9.08 8.23c.18-.4.37-.41.64-.42h.54c.16 0 .34.05.44.3.1.25.7 1.68.76 1.8.06.13.1.27.02.42-.08.16-.13.25-.25.38-.13.15-.27.32-.38.43-.13.13-.26.27-.11.52.15.25.68 1.09 1.46 1.76 1 .86 1.84 1.13 2.1 1.26.26.12.4.1.56-.06.16-.17.65-.76.83-1.02.17-.26.35-.22.59-.13.24.08 1.53.72 1.79.85.26.13.43.19.5.3.06.1.06.61-.14 1.2-.2.58-1.15 1.1-1.58 1.17-.43.07-.98.1-1.58-.1-.36-.11-.83-.27-1.43-.53a11.93 11.93 0 0 1-4.55-4.02c-.6-.83-1.23-1.85-1.23-2.87 0-1.02.54-1.52.73-1.73.19-.2.42-.25.56-.25Z" fill="currentColor"/></svg>; }
+
+export default function Presupuesto() {
+  const [projectType, setProjectType] = useState("Frase");
+  
+  // Ahora es un array para permitir múltiples colores
+  const [selectedColors, setSelectedColors] = useState([colors[4].value]); 
+  
+  const [letterStyle, setLetterStyle] = useState("Cursiva");
+  const [fileName, setFileName] = useState("");
+  const [fileObjeto, setFileObjeto] = useState(null); // Guardamos el archivo físico
+  
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState({ type: '', message: '' });
+
   const [formData, setFormData] = useState({
-    tipo: 'texto',
-    textoCartel: '',
-    tipografia: 'Cursive',
-    color: 'Rosa',
-    ancho: '',
-    alto: '',
-    observaciones: '',
-    nombre: '',
-    email: '',
-    telefono: ''
+    ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: ""
   });
 
-  const colores = [
-    { nombre: 'Blanco Frío', hex: '#E0F7FA' },
-    { nombre: 'Blanco Cálido', hex: '#FFF3E0' },
-    { nombre: 'Amarillo', hex: '#FFEB3B' },
-    { nombre: 'Naranja', hex: '#FF9800' },
-    { nombre: 'Rojo', hex: '#FF0000' },
-    { nombre: 'Rosa', hex: '#E91E63' },
-    { nombre: 'Violeta', hex: '#9C27B0' },
-    { nombre: 'Azul', hex: '#0066FF' },
-    { nombre: 'Celeste', hex: '#03A9F4' },
-    { nombre: 'Verde', hex: '#4CAF50' },
-  ];
+  // Lógica para seleccionar y deseleccionar múltiples colores
+  const toggleColor = (colorValue) => {
+    setSelectedColors((prev) => {
+      if (prev.includes(colorValue)) {
+        return prev.filter((c) => c !== colorValue); // Si ya está, lo saca
+      } else {
+        return [...prev, colorValue]; // Si no está, lo agrega
+      }
+    });
+  };
 
-  const handleChange = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
-  const handleColorSelect = (nombreColor) => { setFormData({ ...formData, color: nombreColor }); };
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      setFileObjeto(file);
+    } else {
+      setFileName("");
+      setFileObjeto(null);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!terminosAceptados) return;
+    if (selectedColors.length === 0) {
+      setFeedback({ type: 'error', message: 'Por favor selecciona al menos un color.' });
+      return;
+    }
+
+    setLoading(true);
+    setFeedback({ type: '', message: '' });
+
+    // Traducimos los códigos hexadecimales a los nombres legibles
+    const colorNames = selectedColors
+      .map(hex => colors.find(c => c.value === hex)?.name)
+      .join(" + ");
+
+    // Creamos un FormData (Obligatorio para enviar archivos por internet)
+    const payload = new FormData();
+    payload.append('nombre', formData.nombre);
+    payload.append('email', formData.email);
+    payload.append('telefono', formData.telefono);
+    payload.append('projectType', projectType);
+    payload.append('ideaText', formData.ideaText);
+    payload.append('colores', colorNames);
+    payload.append('estilo', letterStyle);
+    payload.append('ancho', formData.ancho);
+    payload.append('alto', formData.alto);
+
+    // Adjuntamos la foto si el usuario subió una
+    if (fileObjeto && projectType === "Logo") {
+      payload.append('attachment', fileObjeto);
+    }
+
+    try {
+      // Importante: al pasar FormData, Axios ajusta el Content-Type automáticamente a multipart/form-data
+      await api.post('/cotizaciones/enviar', payload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      setFeedback({ type: 'success', message: '¡Solicitud enviada exitosamente! Revisá tu correo.' });
+      
+      // Limpieza
+      setFormData({ ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: "" });
+      setSelectedColors([colors[4].value]);
+      setFileObjeto(null);
+      setFileName("");
+      setTerminosAceptados(false);
+    } catch (error) {
+      setFeedback({ type: 'error', message: 'Error al enviar. Intenta de nuevo o escribinos al WhatsApp.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen pt-10 pb-20 px-4 font-sans relative transition-colors duration-300 text-gray-900 dark:text-white">
-      
-      {/* --- FONDO ESTÁTICO CON VIDRIO ESMERILADO DINÁMICO --- */}
-      <div className="fixed inset-0 w-full h-full -z-50">
-        <img src={bgImage} alt="Fondo Neon" className="w-full h-full object-cover" />
-        {/* Aquí está la magia: bg-white/90 en claro, bg-neutral-950/85 en oscuro */}
-        <div className="absolute inset-0 bg-white/90 dark:bg-neutral-950/85 backdrop-blur-sm transition-colors duration-300"></div>
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@500;700;900&display=swap');
+      `}</style>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
+      <main className="relative min-h-screen text-white font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
         
-        {/* --- COLUMNA IZQUIERDA: EL COTIZADOR --- */}
-        <div className="animate-fade-in-up">
-          <div className="mb-8">
-             <h1 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-red drop-shadow-lg">
-               COTIZADOR ONLINE
-             </h1>
-             <p className="text-gray-600 dark:text-gray-300 font-medium">Diseña tu cartel y recibí el precio por mail.</p>
-          </div>
+        {/* FONDO */}
+        <div className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgLadrillos})` }}>
+          <div className="absolute inset-0 bg-[#050508]/90 backdrop-grayscale-[0.5]"></div>
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+        </div>
 
-          {/* Formulario Translúcido */}
-          <form 
-            action="https://formsubmit.co/neonflex.arg@gmail.com" 
-            method="POST" 
-            encType="multipart/form-data"
-            className="bg-white/80 dark:bg-neutral-900/80 p-8 rounded-3xl border border-gray-200 dark:border-neutral-700 shadow-2xl space-y-8 backdrop-blur-md transition-colors duration-300"
-          >
-            <input type="hidden" name="_subject" value={`Nueva Cotización: ${formData.textoCartel || 'Diseño Personalizado'} (${formData.nombre})`} />
-            <input type="hidden" name="_replyto" value={formData.email} />
-            <input type="hidden" name="_template" value="table" />
-            <input type="hidden" name="_next" value="http://localhost:5173/presupuesto" />
-            <input type="hidden" name="_captcha" value="false" />
-
-            {/* PASO 1 */}
-            <div>
-              <label className="text-sm font-bold text-neon-blue uppercase mb-3 block tracking-wider">1. ¿Qué querés hacer?</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button 
-                  type="button"
-                  onClick={() => setFormData({...formData, tipo: 'texto'})}
-                  className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${formData.tipo === 'texto' ? 'bg-gray-100 dark:bg-neutral-800 border-neon-blue text-gray-900 dark:text-white shadow-[0_0_10px_rgba(0,240,255,0.2)]' : 'border-gray-300 dark:border-neutral-700 text-gray-500 hover:border-gray-400 dark:hover:border-gray-500'}`}
-                >
-                  <FaFont size={24} />
-                  <span className="font-bold">Frase / Texto</span>
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => setFormData({...formData, tipo: 'logo'})}
-                  className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${formData.tipo === 'logo' ? 'bg-gray-100 dark:bg-neutral-800 border-neon-red text-gray-900 dark:text-white shadow-[0_0_10px_rgba(255,23,68,0.2)]' : 'border-gray-300 dark:border-neutral-700 text-gray-500 hover:border-gray-400 dark:hover:border-gray-500'}`}
-                >
-                  <FaImage size={24} />
-                  <span className="font-bold">Logo / Dibujo</span>
-                </button>
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-4 pt-24 pb-20 md:px-8">
+          <section className="flex flex-1 flex-col py-8 lg:py-12">
+            
+            <div className="mb-10 max-w-3xl">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="h-[1px] w-8 bg-cyan-400" />
+                <p className="text-[11px] font-bold font-['Orbitron'] tracking-[0.24em] text-cyan-400 uppercase">Diseñado para impactar</p>
               </div>
+              <h1 className="font-['Orbitron'] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight uppercase mb-4 leading-tight">
+                Tu idea. <br className="hidden sm:block" />
+                <span className="text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">En neón.</span>
+              </h1>
+              <p className="max-w-xl text-lg text-gray-400 font-medium">
+                Cuéntanos qué imaginas y nuestro equipo creará una cotización a la medida de tu espacio.
+              </p>
             </div>
 
-            {/* PASO 2 */}
-            {formData.tipo === 'texto' ? (
-               <div className="animate-fade-in-up">
-                 <label className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase mb-2 block">Tu Frase</label>
-                 <input 
-                    type="text" name="textoCartel" value={formData.textoCartel} onChange={handleChange}
-                    placeholder="Escribí aquí (Ej: Better Together)" 
-                    className="w-full bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-4 text-lg text-gray-900 dark:text-white focus:border-neon-blue outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 transition-colors"
-                    required
-                 />
-                 <label className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase mt-4 mb-2 block">Estilo de Letra</label>
-                 <select 
-                    name="tipografia" value={formData.tipografia} onChange={handleChange}
-                    className="w-full bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-4 text-gray-900 dark:text-white focus:border-neon-blue outline-none transition-colors"
-                 >
-                   <option value="Cursive">Cursiva (Estilo Firma)</option>
-                   <option value="Block">Imprenta (Mayúsculas)</option>
-                   <option value="DoubleLine">Doble Línea (Retro)</option>
-                   <option value="Minimal">Minimalista</option>
-                 </select>
-               </div>
-            ) : (
-              <div className="animate-fade-in-up space-y-4">
-                <div>
-                    <label className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase mb-2 block">Descripción</label>
-                    <textarea 
-                    name="observaciones" rows="2"
-                    className="w-full bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-4 text-gray-900 dark:text-white focus:border-neon-red outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 transition-colors"
-                    placeholder="Contanos tu idea..."
-                    ></textarea>
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(310px,0.85fr)]">
+              
+              {/* FORMULARIO */}
+              <form onSubmit={handleSubmit} className="bg-[#111117]/80 backdrop-blur-md border border-white/5 rounded-sm p-6 sm:p-8 shadow-2xl">
+                <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
+                  <div>
+                    <p className="text-[10px] font-bold font-['Orbitron'] text-cyan-400 tracking-[0.2em] uppercase">01 / Proyecto</p>
+                    <h2 className="font-['Orbitron'] mt-1 text-lg font-bold tracking-wider uppercase text-white">Configura tu letrero</h2>
+                  </div>
                 </div>
-                <div>
-                    <label className="text-sm font-bold text-neon-red uppercase mb-2 block flex items-center gap-2">
-                        <FaCloudUploadAlt size={18} /> Subir Boceto / Logo
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  
+                  {/* Selector Frase o Logo */}
+                  <fieldset className="sm:col-span-2">
+                    <legend className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">¿Qué quieres crear?</legend>
+                    <div className="grid grid-cols-2 gap-4">
+                      {["Frase", "Logo"].map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setProjectType(type)}
+                          className={`py-4 px-2 rounded-sm border flex justify-center items-center gap-2 font-['Orbitron'] text-xs font-bold tracking-widest uppercase transition-all ${projectType === type ? "border-cyan-400 bg-cyan-500/10 text-cyan-400" : "border-white/10 bg-[#0a0a0f] text-gray-500 hover:text-white"}`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  {/* Input Principal */}
+                  <label className="sm:col-span-2">
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">
+                      {projectType === "Frase" ? "Tu frase" : "Describe tu logo"}
+                    </span>
+                    <input required name="ideaText" value={formData.ideaText} onChange={handleInputChange} type="text" placeholder={projectType === "Frase" ? "Ej. Good vibes only" : "Ej. Logotipo circular para estudio creativo"} className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                  </label>
+
+                  {/* Opciones Condicionales */}
+                  {projectType === "Frase" ? (
+                    <fieldset className="sm:col-span-2">
+                      <legend className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Estilo de letra</legend>
+                      <div className="grid grid-cols-3 gap-3">
+                        {["Cursiva", "Imprenta", "Minúscula"].map((style) => (
+                          <button key={style} type="button" onClick={() => setLetterStyle(style)} className={`py-3 px-2 rounded-sm border font-bold text-xs tracking-wider transition-all ${letterStyle === style ? "border-cyan-400 bg-cyan-500/10 text-cyan-400" : "border-white/10 bg-[#0a0a0f] text-gray-500 hover:text-white"}`}>
+                            <span className={style === "Cursiva" ? "italic" : style === "Minúscula" ? "lowercase" : "uppercase"}>{style}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
+                  ) : (
+                    <label className="sm:col-span-2">
+                      <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Sube tu boceto</span>
+                      <div className="relative flex items-center bg-[#0a0a0f] border border-white/10 rounded-sm p-3 cursor-pointer hover:border-cyan-400/30 transition-colors">
+                        <input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.svg" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} />
+                        <div className="w-10 h-10 bg-white/5 rounded-sm flex items-center justify-center text-gray-400 mr-4">+</div>
+                        <div className="flex-1 min-w-0">
+                          <span className="block truncate text-sm font-bold text-white">{fileName || "Seleccionar archivo"}</span>
+                          <span className="block text-xs text-gray-500 mt-1">JPG, PNG o PDF · Máx. 10 MB</span>
+                        </div>
+                        <span className="text-[10px] font-bold font-['Orbitron'] tracking-widest text-cyan-400 uppercase">Explorar</span>
+                      </div>
                     </label>
-                    <input 
-                        type="file" name="attachment" accept="image/png, image/jpeg, image/jpg"
-                        className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neon-red/10 file:text-neon-red hover:file:bg-neon-red/20 cursor-pointer border border-gray-300 dark:border-neutral-700 rounded-xl bg-white/50 dark:bg-neutral-950/30 p-2 transition-colors"
-                    />
-                </div>
-              </div>
-            )}
+                  )}
 
-            {/* PASO 3 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                 <label className="text-sm font-bold text-neon-blue uppercase mb-3 block tracking-wider flex items-center gap-2"><FaPalette/> Color</label>
-                 <div className="flex flex-wrap gap-3">
-                   {colores.map((c) => (
-                     <div 
-                        key={c.nombre} onClick={() => handleColorSelect(c.nombre)}
-                        className={`w-8 h-8 rounded-full cursor-pointer transition-transform hover:scale-125 border-2 ${formData.color === c.nombre ? 'border-gray-900 dark:border-white scale-110' : 'border-transparent'}`}
-                        style={{ backgroundColor: c.hex, boxShadow: formData.color === c.nombre ? `0 0 10px ${c.hex}` : 'none' }}
-                        title={c.nombre}
-                     ></div>
-                   ))}
-                 </div>
-                 <input type="hidden" name="color_seleccionado" value={formData.color} />
-                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Seleccionado: <span className="text-gray-900 dark:text-white font-bold">{formData.color}</span></p>
-              </div>
-
-              <div>
-                <label className="text-sm font-bold text-neon-blue uppercase mb-3 block tracking-wider flex items-center gap-2"> Medidas</label>
-                <div className="flex gap-2">
-                    <div className="relative w-full">
-                        <FaRulerHorizontal className="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500" />
-                        <input 
-                        type="text" name="ancho" placeholder="Ancho (cm)" onChange={handleChange}
-                        className="w-full bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-3 pl-9 text-gray-900 dark:text-white focus:border-neon-blue outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 transition-colors" required
-                        />
+                  {/* Medidas */}
+                  <label>
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Ancho Aprox.</span>
+                    <div className="relative">
+                      <input required name="ancho" value={formData.ancho} onChange={handleInputChange} type="number" min="10" placeholder="Ej. 80" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 pr-12 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold uppercase">cm</span>
                     </div>
-                    <div className="relative w-full">
-                        <FaRulerVertical className="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500" />
-                        <input 
-                        type="text" name="alto" placeholder="Alto (cm)" onChange={handleChange}
-                        className="w-full bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-3 pl-9 text-gray-900 dark:text-white focus:border-neon-blue outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 transition-colors"
-                        />
+                  </label>
+                  <label>
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Alto Aprox.</span>
+                    <div className="relative">
+                      <input required name="alto" value={formData.alto} onChange={handleInputChange} type="number" min="10" placeholder="Ej. 40" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 pr-12 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold uppercase">cm</span>
                     </div>
+                  </label>
+
+                  {/* Datos Personales */}
+                  <label>
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Tu Nombre</span>
+                    <input required name="nombre" value={formData.nombre} onChange={handleInputChange} type="text" placeholder="Tu nombre" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                  </label>
+                  <label>
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">WhatsApp</span>
+                    <input required name="telefono" value={formData.telefono} onChange={handleInputChange} type="tel" placeholder="+54 9 11 0000 0000" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                  </label>
+                  <label className="sm:col-span-2">
+                    <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Correo electrónico</span>
+                    <input required name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="tu@email.com" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
+                  </label>
+
+                  {/* Colores Múltiples */}
+                  <fieldset className="sm:col-span-2">
+                    <div className="mb-3 flex items-center justify-between">
+                      <legend className="text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest">Colores (Elegí uno o más)</legend>
+                      <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">{selectedColors.length} Seleccionados</span>
+                    </div>
+                    <div className="flex flex-wrap gap-3 p-4 bg-[#0a0a0f] border border-white/10 rounded-sm">
+                      {colors.map((color) => {
+                        const isSelected = selectedColors.includes(color.value);
+                        return (
+                          <button
+                            key={color.value}
+                            type="button"
+                            title={color.name}
+                            onClick={() => toggleColor(color.value)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${isSelected ? "scale-110 border-white" : "border-transparent opacity-50 hover:opacity-100"}`}
+                            style={{
+                              backgroundColor: color.value,
+                              boxShadow: isSelected ? `0 0 14px ${color.value}90` : 'none',
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </fieldset>
                 </div>
-              </div>
+                
+                <div className="mt-8 mb-6 flex items-start gap-3 bg-[#050508]/50 p-4 border border-white/5 rounded-sm">
+                  <input type="checkbox" id="terminos" checked={terminosAceptados} onChange={(e) => setTerminosAceptados(e.target.checked)} className="mt-0.5 w-4 h-4 accent-cyan-500 cursor-pointer shrink-0" required />
+                  <label htmlFor="terminos" className="text-gray-400 text-xs leading-relaxed select-none">
+                    He leído y acepto los <a href="/terminos" target="_blank" className="text-cyan-400 hover:underline">Términos y Condiciones</a>.
+                  </label>
+                </div>
+
+                {feedback.message && (
+                  <div className={`mb-6 p-4 rounded-sm text-sm font-bold font-['Orbitron'] tracking-widest uppercase flex items-center gap-2 border ${feedback.type === 'success' ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'bg-red-500/10 border-red-500/50 text-red-400'}`}>
+                    {feedback.message}
+                  </div>
+                )}
+
+                <button type="submit" disabled={!terminosAceptados || loading} className={`w-full font-black font-['Orbitron'] py-4 px-6 rounded-sm uppercase tracking-widest text-sm transition-all flex items-center justify-center gap-3 ${!terminosAceptados || loading ? 'bg-white/5 text-gray-500 border border-white/10 cursor-not-allowed' : 'bg-cyan-500 hover:bg-white text-[#050508] shadow-[0_0_15px_rgba(0,240,255,0.3)]'}`}>
+                  <span>{loading ? 'ENVIANDO...' : 'SOLICITAR COTIZACIÓN'}</span>
+                  {!loading && <ArrowIcon />}
+                </button>
+              </form>
+
+              {/* SIDEBAR DERECHO */}
+              <aside className="space-y-6">
+                <a href={waLink} target="_blank" rel="noreferrer" className="block bg-[#111117]/80 backdrop-blur-md border border-[#43e77d]/30 hover:border-[#43e77d] rounded-sm p-6 group transition-colors">
+                  <div className="mb-6 flex items-start justify-between text-[#43e77d]">
+                    <WhatsAppIcon />
+                    <span className="flex items-center gap-2 text-[10px] font-bold font-['Orbitron'] tracking-widest uppercase border border-[#43e77d]/30 px-2 py-1 rounded-sm">
+                      <span className="w-1.5 h-1.5 bg-[#43e77d] rounded-full animate-pulse" />
+                      En línea
+                    </span>
+                  </div>
+                  <h3 className="font-['Orbitron'] mt-2 text-xl font-bold uppercase text-white">¿Prefieres hablar<br />con un experto?</h3>
+                  <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Escríbenos por WhatsApp</span>
+                    <span className="text-[#43e77d] transition-transform group-hover:translate-x-1"><ArrowIcon /></span>
+                  </div>
+                </a>
+              </aside>
             </div>
-
-            {/* PASO 4 */}
-            <div className="pt-6 border-t border-gray-200 dark:border-neutral-700">
-              <label className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 block">Tus Datos</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <input type="text" name="nombre" placeholder="Tu Nombre" onChange={handleChange} className="bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-3 text-gray-900 dark:text-white focus:border-neon-blue outline-none transition-colors" required />
-                 <input type="text" name="telefono" placeholder="WhatsApp" onChange={handleChange} className="bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-3 text-gray-900 dark:text-white focus:border-neon-blue outline-none transition-colors" />
-                 <input type="email" name="email" placeholder="Tu Email" onChange={handleChange} className="col-span-1 md:col-span-2 bg-white/50 dark:bg-neutral-950/50 border border-gray-300 dark:border-neutral-600 rounded-xl p-3 text-gray-900 dark:text-white focus:border-neon-blue outline-none transition-colors" required />
-              </div>
-            </div>
-
-            <button type="submit" className="w-full bg-gradient-to-r from-neon-blue to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white dark:text-neutral-950 font-black py-4 rounded-xl text-lg uppercase tracking-widest shadow-lg shadow-neon-blue/20 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
-               <FaPaperPlane /> Solicitar Cotización
-            </button>
-
-          </form>
+          </section>
         </div>
-
-        {/* --- COLUMNA DERECHA --- */}
-        <div className="flex flex-col justify-center space-y-8">
-           <div className="bg-white/80 dark:bg-neutral-900/80 p-8 rounded-3xl border border-gray-200 dark:border-neutral-700 relative overflow-hidden backdrop-blur-md transition-colors duration-300">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-neon-red/10 rounded-full blur-3xl -z-10"></div>
-              <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">¿Preferís hablar directo?</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">Si tenés un archivo complejo o querés atención personalizada, escribinos al WhatsApp.</p>
-              <a href="https://wa.me/5491164477337" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-full transition-all shadow-lg hover:shadow-green-500/30">
-                <FaWhatsapp size={24} /> Chat con Diego
-              </a>
-           </div>
-           
-           <div className="space-y-6 pl-4">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white border-l-4 border-neon-blue pl-4">¿Por qué Neon Flex?</h3>
-              <ul className="space-y-4 text-gray-600 dark:text-gray-300">
-                 <li className="flex items-start gap-3">
-                   <div className="w-6 h-6 rounded-full bg-neon-blue/20 flex items-center justify-center text-neon-blue text-xs font-bold">✓</div>
-                   <span>Diseño digital previo sin cargo.</span>
-                 </li>
-                 <li className="flex items-start gap-3">
-                   <div className="w-6 h-6 rounded-full bg-neon-blue/20 flex items-center justify-center text-neon-blue text-xs font-bold">✓</div>
-                   <span>Base de acrílico importado.</span>
-                 </li>
-                 <li className="flex items-start gap-3">
-                   <div className="w-6 h-6 rounded-full bg-neon-blue/20 flex items-center justify-center text-neon-blue text-xs font-bold">✓</div>
-                   <span>Garantía escrita.</span>
-                 </li>
-              </ul>
-           </div>
-        </div>
-
-      </div>
-    </div>
+      </main>
+    </>
   );
-};
-
-export default Presupuesto;
+}

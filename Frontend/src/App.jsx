@@ -10,6 +10,7 @@ import Nosotros from './pages/Nosotros.jsx';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductDetail from './pages/ProductDetail';
+import CookieBanner from './components/AvisoPrivacidad.jsx'; 
 function App() {
   return (
     <BrowserRouter>
@@ -25,10 +26,13 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoute />}><Route path="/admin" element={<Admin />} /></Route>
             <Route path="/producto/:id" element={<ProductDetail />} />
+            
           </Routes>
         </main>
         <Footer />
+        
       </div>
+      <CookieBanner />
     </BrowserRouter>
   );
 }

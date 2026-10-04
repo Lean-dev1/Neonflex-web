@@ -1,8 +1,7 @@
 import { pool } from '../config/db.js'; 
 import { uploadImage, deleteImage } from '../config/cloudinary.js';
 import fs from 'fs';
-
-// Obtener todos los productos 
+ 
 export const getProducts = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM products');
@@ -12,7 +11,6 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// Obtener un solo producto
 export const getProduct = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
@@ -23,7 +21,6 @@ export const getProduct = async (req, res) => {
   }
 };
 
-// Crear producto
 export const createProduct = async (req, res) => {
   try {
     const { title, description, price, category } = req.body;
@@ -48,7 +45,6 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// Actualizar producto
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { title, description, price, category } = req.body;
@@ -86,7 +82,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// Borrar producto
 export const deleteProduct = async (req, res) => {
   try {
     const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [req.params.id]);

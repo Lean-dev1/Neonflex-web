@@ -2,35 +2,44 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaInstagram, FaWhatsapp, FaMapMarkerAlt, FaEnvelope, FaArrowRight } from 'react-icons/fa';
 
+// 1. IMPORTAMOS EL LOGO (Ajustá la ruta y el nombre del archivo según corresponda en tu proyecto)
+import logo from '../assets/images/neon.png'; 
+
 const Footer = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@500;700;900&display=swap');
       `}</style>
 
-      <footer className="bg-[#050508] border-t border-white/10 pt-16 pb-8 text-gray-400 font-['Rajdhani']">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Fondo negro absoluto para anclar el final de la página */}
+      <footer className="relative z-20 bg-[#050508] border-t border-white/5 pt-16 pb-8 text-gray-400 font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* --- FILA SUPERIOR: Marca y Newsletter --- */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-white/10 pb-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-white/5 pb-12">
+            
+            {/* 2. REEMPLAZAMOS EL TEXTO POR LA ETIQUETA IMG DEL LOGO */}
             <div>
-              <Link to="/" className="flex items-center gap-1 font-['Orbitron'] mb-2 hover:opacity-80 transition-opacity inline-flex">
-                <span className="text-3xl font-black text-white tracking-widest">Neon</span>
-                <span className="text-3xl font-black text-cyan-400 tracking-widest">FlexPremium </span>
+              <Link to="/" className="flex items-center mb-2 hover:opacity-80 transition-opacity">
+                <img 
+                  src={logo} 
+                  alt="Neon Flex Premium Logo" 
+                  className=" sm:h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,240,255,0.15)]" 
+                />
               </Link>
             </div>
             
             {/* Formulario de Suscripción */}
             <div className="w-full md:w-auto">
-              <p className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-3">Enterate de nuevos diseños</p>
-              <div className="flex relative w-full md:w-96">
+              <p className="text-white font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-xs mb-3">Enterate de nuevos diseños</p>
+              <div className="flex relative w-full md:w-96 group">
                 <input 
                   type="email" 
                   placeholder="Tu correo electrónico" 
-                  className="w-full bg-white/5 border border-white/10 rounded-l-sm py-3 px-4 text-white focus:outline-none focus:border-cyan-400/50 transition-colors placeholder:text-gray-600 text-sm" 
+                  className="w-full bg-[#0a0a0f] border border-white/10 rounded-l-sm py-3.5 px-4 text-white focus:outline-none focus:border-cyan-400/50 transition-colors placeholder:text-gray-600 text-sm font-medium" 
                 />
-                <button className="bg-cyan-500/10 border border-cyan-500/20 border-l-0 text-cyan-400 px-6 rounded-r-sm font-bold hover:bg-cyan-500 hover:text-[#050508] transition-colors flex items-center justify-center">
+                <button className="bg-cyan-500/10 border border-cyan-500/20 border-l-0 text-cyan-400 px-6 rounded-r-sm font-bold hover:bg-cyan-500 hover:text-[#050508] transition-all flex items-center justify-center group-hover:border-cyan-400/50">
                   <FaArrowRight size={14} />
                 </button>
               </div>
@@ -50,7 +59,7 @@ const Footer = () => {
                   href="https://www.instagram.com/neonflexpremium/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                  className="w-10 h-10 rounded-sm bg-[#0a0a0f] border border-white/10 flex items-center justify-center text-gray-400 hover:border-cyan-400/50 hover:text-cyan-400 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all"
                 >
                   <FaInstagram size={18} />
                 </a>
@@ -58,7 +67,7 @@ const Footer = () => {
                   href="https://wa.me/5491164477337" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:border-green-500/50 hover:text-green-500 transition-colors"
+                  className="w-10 h-10 rounded-sm bg-[#0a0a0f] border border-white/10 flex items-center justify-center text-gray-400 hover:border-[#43e77d]/50 hover:text-[#43e77d] hover:shadow-[0_0_15px_rgba(67,231,125,0.2)] transition-all"
                 >
                   <FaWhatsapp size={18} />
                 </a>
@@ -67,49 +76,50 @@ const Footer = () => {
 
             {/* Columna Tienda */}
             <div>
-              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Tienda</h3>
-              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
-                <li><Link to="/productos" className="hover:text-cyan-400 transition-colors">Ver Catálogo</Link></li>
-                <li><Link to="/presupuesto" className="hover:text-cyan-400 transition-colors">Cotizador Online</Link></li>
-                <li><Link to="/nosotros" className="hover:text-cyan-400 transition-colors">Nuestro Taller</Link></li>
+              <h3 className="text-cyan-400 font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-[10px] mb-6">Tienda</h3>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <li><Link to="/productos" className="hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-cyan-400 rounded-full opacity-0 hover:opacity-100 transition-opacity"></span>Ver Catálogo</Link></li>
+                <li><Link to="/presupuesto" className="hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-cyan-400 rounded-full opacity-0 hover:opacity-100 transition-opacity"></span>Cotizador Online</Link></li>
+                <li><Link to="/nosotros" className="hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-cyan-400 rounded-full opacity-0 hover:opacity-100 transition-opacity"></span>Nuestro Taller</Link></li>
               </ul>
             </div>
 
             {/* Columna Ayuda */}
             <div>
-              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Ayuda</h3>
-              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Preguntas Frecuentes</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Envíos y Entregas</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Garantía Escrita</a></li>
+              <h3 className="text-cyan-400 font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-[10px] mb-6">Ayuda</h3>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Envíos y Entregas</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Garantía Escrita</a></li>
               </ul>
             </div>
 
             {/* Columna Contacto */}
             <div>
-              <h3 className="text-white font-bold uppercase tracking-[0.15em] text-sm mb-6">Contacto</h3>
-              <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-gray-400">
-                <li className="flex items-start gap-3">
-                  <FaMapMarkerAlt className="mt-0.5 text-gray-500" size={14} />
-                  <span>Adrogué, Buenos Aires<br/><span className="text-xs text-gray-600 font-normal normal-case tracking-normal">Argentina</span></span>
+              <h3 className="text-cyan-400 font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-[10px] mb-6">Contacto</h3>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <li className="flex items-start gap-3 group">
+                  <FaMapMarkerAlt className="mt-0.5 text-gray-500 group-hover:text-cyan-400 transition-colors" size={14} />
+                  <span>Adrogué, Buenos Aires<br/><span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Argentina</span></span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <FaWhatsapp className="text-gray-500" size={14} />
-                  <span>+54 9 11 6447-7337</span>
+                <li className="flex items-center gap-3 group">
+                  <FaWhatsapp className="text-gray-500 group-hover:text-[#43e77d] transition-colors" size={14} />
+                  <span className="group-hover:text-white transition-colors">+54 9 11 6447-7337</span>
                 </li>
-                <li className="flex items-center gap-3">
-                  <FaEnvelope className="text-gray-500" size={14} />
-                  <span className="normal-case tracking-normal">ventas@neonflex.com.ar</span>
+                <li className="flex items-center gap-3 group">
+                  <FaEnvelope className="text-gray-500 group-hover:text-cyan-400 transition-colors" size={14} />
+                  <span className="normal-case tracking-normal font-medium text-sm group-hover:text-white transition-colors">ventas@neonflex.com.ar</span>
                 </li>
               </ul>
             </div>
           </div>
 
           {/* --- FILA INFERIOR: Copyright y Admin --- */}
-          <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-8 text-xs font-bold uppercase tracking-widest text-gray-600">
+          <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600">
             <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} NeonFlexPremium. Todos los derechos reservados.</p>
+            <p className="mb-4 md:mb-0">Desarrollado por Leandro Jerez & Faustina Retamar[cite: 7]</p>
             <div className="flex gap-6">
-              <Link to="/admin" className="hover:text-gray-400 transition-colors">Acceso Interno</Link>
+              <Link to="/admin" className="hover:text-cyan-400 transition-colors">Acceso Interno</Link>
             </div>
           </div>
 

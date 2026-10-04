@@ -4,7 +4,7 @@ import fileUpload from 'express-fileupload';
 import dotenv from 'dotenv';
 import productRoutes from './routes/products.routes.js'; 
 import authRoutes from './routes/auth.routes.js';
-
+import cotizacionesRoutes from './routes/cotizaciones.js';
 dotenv.config();
 
 const app = express();
@@ -18,11 +18,21 @@ app.use(fileUpload({
     tempFileDir: './uploads'
 }));
 
-//aca se definen las rutas 
+
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production' && req.header('x-forwarded-proto') !== 'https') {
+    return res.redirect(`https://${req.header('host')}${req.url}`);
+  }
+  next();
+});
+
+
+app.use('/api/cotizaciones', cotizacionesRoutes);
+
+//rutas 
 app.use('/api/auth', authRoutes);     
 app.use('/api/products', productRoutes);
 
-// Ruta de prueba
 app.get('/', (req, res) => {
     res.send('API backend en funcionamiento');
 });

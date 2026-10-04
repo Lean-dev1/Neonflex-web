@@ -1,79 +1,165 @@
 import React from 'react';
-import { FaHandHoldingHeart, FaLightbulb, FaTools } from 'react-icons/fa';
+import bgLadrillos from '../assets/images/fondo.png';
 
-const tallerImg = "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80";
-
-const Nosotros = () => {
+// -------------------------------------------------------------
+// Componente Iconos SVG
+// -------------------------------------------------------------
+function HeartIcon({ className }) {
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 text-gray-900 dark:text-white font-sans transition-colors duration-300">
-      
-      {/* --- HISTORIA --- */}
-      <div className="max-w-7xl mx-auto py-20 px-4 grid md:grid-cols-2 gap-16 items-center">
-        <div className="animate-fade-in-up">
-           <span className="text-neon-blue font-bold tracking-widest uppercase text-sm mb-2 block">Nuestra Historia</span>
-           <h1 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
-            Más que carteles, <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-red">creamos atmósferas.</span>
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-neutral-400 mb-6 leading-relaxed">
-            Somos un emprendimiento familiar apasionado por la luz y el diseño. Lo que empezó en el taller de Diego como una curiosidad por la tecnología LED, se transformó en <strong>Neon Flex</strong>.
-          </p>
-          <p className="text-lg text-gray-600 dark:text-neutral-400 leading-relaxed border-l-4 border-neon-red pl-6 bg-gray-50 dark:bg-transparent py-2">
-            "Cada pieza que hacemos es única, fabricada a mano con atención obsesiva al detalle, combinando la artesanía tradicional con la tecnología de impresión 3D más moderna."
-          </p>
-        </div>
-        
-        <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-neon-blue via-transparent to-neon-red rounded-2xl blur-2xl opacity-20 dark:opacity-40 group-hover:opacity-40 dark:group-hover:opacity-60 transition-opacity duration-500"></div>
-            <div className="relative z-10 rounded-2xl overflow-hidden border border-gray-200 dark:border-neutral-700 shadow-2xl h-[400px]">
-                <img 
-                    src={tallerImg} 
-                    alt="Nuestro Taller" 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
-                />
-            </div>
-        </div>
-      </div>
-
-      {/* --- VALORES --- */}
-      <div className="bg-gray-50 dark:bg-neutral-900 py-20 border-y border-gray-200 dark:border-neutral-800 relative overflow-hidden transition-colors duration-300">
-         <div className="absolute top-0 left-1/4 w-96 h-96 bg-neon-blue/10 dark:bg-neon-blue/5 rounded-full blur-3xl -z-0 pointer-events-none"></div>
-         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-neon-red/10 dark:bg-neon-red/5 rounded-full blur-3xl -z-0 pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-            <h2 className="text-3xl font-bold text-center mb-16 text-gray-900 dark:text-white">¿Por qué elegirnos?</h2>
-            
-             <div className="grid md:grid-cols-3 gap-8 text-center">
-              
-              <div className="p-8 bg-white dark:bg-neutral-950 rounded-2xl border border-gray-200 dark:border-neutral-800 hover:border-neon-red dark:hover:border-neon-red transition-all shadow-lg group hover:-translate-y-2">
-                <div className="w-20 h-20 mx-auto bg-gray-100 dark:bg-neutral-900 rounded-full flex items-center justify-center mb-6 group-hover:bg-neon-red/10 transition-colors">
-                    <FaHandHoldingHeart size={35} className="text-gray-400 dark:text-neutral-400 group-hover:text-neon-red transition-colors"/>
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Hecho con Pasión</h3>
-                <p className="text-gray-600 dark:text-neutral-400 leading-relaxed">No somos una fábrica masiva. Somos artesanos que cuidamos cada curva del neón y cada soldadura.</p>
-              </div>
-
-              <div className="p-8 bg-white dark:bg-neutral-950 rounded-2xl border border-gray-200 dark:border-neutral-800 hover:border-neon-blue dark:hover:border-neon-blue transition-all shadow-lg group hover:-translate-y-2">
-                <div className="w-20 h-20 mx-auto bg-gray-100 dark:bg-neutral-900 rounded-full flex items-center justify-center mb-6 group-hover:bg-neon-blue/10 transition-colors">
-                    <FaLightbulb size={35} className="text-gray-400 dark:text-neutral-400 group-hover:text-neon-blue transition-colors"/>
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Tecnología Duradera</h3>
-                <p className="text-gray-600 dark:text-neutral-400 leading-relaxed">Usamos tiras LED de 12V de alta eficiencia. Brillan más, consumen menos y duran años encendidas.</p>
-              </div>
-
-               <div className="p-8 bg-white dark:bg-neutral-950 rounded-2xl border border-gray-200 dark:border-neutral-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all shadow-lg group hover:-translate-y-2">
-                <div className="w-20 h-20 mx-auto bg-gray-100 dark:bg-neutral-900 rounded-full flex items-center justify-center mb-6 group-hover:bg-purple-500/10 transition-colors">
-                    <FaTools size={35} className="text-gray-400 dark:text-neutral-400 group-hover:text-purple-500 transition-colors"/>
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Personalización Total</h3>
-                <p className="text-gray-600 dark:text-neutral-400 leading-relaxed">Si puedes dibujarlo, podemos hacerlo neón. Tu logo, tu frase, tu idea loca... la hacemos luz.</p>
-              </div>
-
-            </div>
-        </div>
-      </div>
-    </div>
+    <svg viewBox="0 0 32 32" fill="none" className={className} aria-hidden="true">
+      <path d="M16 27S4.5 20.3 4.5 11.9A6.4 6.4 0 0 1 16 8a6.4 6.4 0 0 1 11.5 3.9C27.5 20.3 16 27 16 27Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M11 9.3c-1.7.8-2.6 2.3-2.4 4.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
   );
-};
+}
 
-export default Nosotros;
+function BulbIcon({ className }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" className={className} aria-hidden="true">
+      <path d="M10.8 21c-2.1-1.6-3.4-4.1-3.4-6.9a8.6 8.6 0 1 1 13.8 6.9c-1.3.9-1.7 2-1.7 3.2h-7c0-1.2-.4-2.3-1.7-3.2Z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12.7 27h6.6M12.5 24.2h7M16 2V.5M25.9 6.1 27 5M6.1 6.1 5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ToolsIcon({ className }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" className={className} aria-hidden="true">
+      <path d="m18.5 11.8 8.8 8.8a2.8 2.8 0 0 1-4 4l-8.7-8.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M18.6 9.2a6.7 6.7 0 0 1-8.3 8.4L4 23.9a2.2 2.2 0 0 1-3.1-3.1l6.3-6.3a6.7 6.7 0 0 1 8.4-8.3l-3.9 3.9.7 2.2 2.2.7 4-3.8Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="m24.4 21.7 1.1 1.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// -------------------------------------------------------------
+// Componente Tarjeta de Valor
+// -------------------------------------------------------------
+function ValueCard({ number, icon, title, children }) {
+  return (
+    <article className="bg-[#111117]/80 backdrop-blur-md border border-white/5 p-8 rounded-sm group hover:border-cyan-400/30 transition-colors">
+      <div className="flex items-start justify-between">
+        <div className="text-gray-400 group-hover:text-cyan-400 transition-colors">{icon}</div>
+        <span className="font-['Orbitron'] text-[10px] tracking-[0.25em] text-white/20 font-bold">{number}</span>
+      </div>
+      <div className="mt-10 h-px w-10 bg-cyan-400/50 transition-all duration-500 group-hover:w-16 group-hover:bg-cyan-400" />
+      <h3 className="font-['Orbitron'] mt-6 text-base md:text-lg font-bold tracking-[0.04em] text-white uppercase">{title}</h3>
+      <p className="mt-4 text-sm md:text-base leading-relaxed text-gray-400 font-medium">{children}</p>
+    </article>
+  );
+}
+
+// -------------------------------------------------------------
+// MAIN COMPONENT: Nosotros
+// -------------------------------------------------------------
+const workshopImage = "https://images.unsplash.com/photo-1778582384724-d6ce1dfe6df1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZW9uJTIwc2lnbiUyMHdvcmtzaG9wJTIwaW5kdXN0cmlhbCUyMGRhcmslMjBjcmFmdHNtYW58ZW58MXx8fHwxNzkxMDAxMDY1fDA&ixlib=rb-4.1.0&q=85&w=1600";
+
+export default function Nosotros() {
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@500;700;900&display=swap');
+      `}</style>
+
+      <main className="relative min-h-screen text-white font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
+        
+        {/* ========================================= */}
+        {/* FONDO: Pared oscura optimizada (z-0)      */}
+        {/* ========================================= */}
+        <div 
+          className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
+          style={{ backgroundImage: `url(${bgLadrillos})` }}
+        >
+          <div className="absolute inset-0 bg-[#050508]/90"></div>
+          
+          <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.06)_0%,transparent_70%)] pointer-events-none"></div>
+          <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,0,0,0.06)_0%,transparent_70%)] pointer-events-none"></div>
+        </div>
+
+        {/* ========================================= */}
+        {/* CONTENIDO PRINCIPAL (relative z-10)       */}
+        {/* ========================================= */}
+        <div className="relative z-10 pt-24 pb-20">
+          
+          {/* --- SECCIÓN HISTORIA --- */}
+          <section className="mx-auto grid max-w-[1440px] gap-14 px-4 pb-24 pt-16 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20 md:px-8">
+            <div>
+              <div className="mb-7 flex items-center gap-4">
+                <span className="h-[1px] w-10 bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
+                <p className="font-['Orbitron'] text-xs font-bold tracking-[0.34em] text-cyan-400 uppercase">NUESTRA HISTORIA</p>
+              </div>
+
+              <h1 className="font-['Orbitron'] max-w-3xl text-4xl sm:text-5xl md:text-6xl font-black uppercase leading-tight tracking-tight">
+                Más que carteles,
+                <span className="block text-white mt-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">creamos atmósferas</span>
+              </h1>
+
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-gray-400 font-medium">
+                Nacimos en un pequeño taller familiar, entre herramientas, cables y la obsesión por transformar ideas en
+                luz. Hoy combinamos ese oficio artesanal con tecnología de precisión para crear piezas que definen
+                espacios.
+              </p>
+
+              <blockquote className="mt-10 max-w-xl py-1 pl-7 border-l-4 border-red-500 shadow-[-10px_0_15px_-10px_rgba(255,0,0,0.2)]">
+                <p className="font-['Orbitron'] text-sm md:text-base font-bold uppercase leading-relaxed tracking-wider text-white">
+                  “No fabricamos neón en serie. Diseñamos la luz que hace único cada lugar.”
+                </p>
+                <footer className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-gray-500">— Taller NeonFlex, 2018</footer>
+              </blockquote>
+            </div>
+
+            {/* Imagen Taller */}
+            <figure className="relative mx-auto w-full max-w-[570px] bg-[#111117]/80 backdrop-blur-md p-2 border border-white/5 rounded-sm shadow-2xl lg:mx-0 group">
+              <div className="relative aspect-[4/4.7] overflow-hidden rounded-sm">
+                <img
+                  className="h-full w-full object-cover object-center grayscale opacity-80 filter saturate-50 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:saturate-100"
+                  src={workshopImage}
+                  alt="Artesano trabajando"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent opacity-80" />
+                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-6">
+                  <div>
+                    <p className="font-['Orbitron'] text-[10px] font-bold tracking-[0.3em] text-cyan-400 uppercase">HECHO A MANO</p>
+                    <p className="mt-2 text-xs font-bold text-gray-400 tracking-widest uppercase">Buenos Aires · Argentina</p>
+                  </div>
+                  <span className="font-['Orbitron'] text-4xl font-black text-white/10 select-none">NFP</span>
+                </div>
+              </div>
+            </figure>
+          </section>
+
+          {/* --- SECCIÓN VALORES --- */}
+          <section className="relative border-t border-white/10 px-4 py-24 md:px-8">
+            <div className="mx-auto max-w-[1440px]">
+              
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="font-['Orbitron'] text-[10px] font-bold tracking-[0.34em] text-red-500 uppercase">LO QUE NOS MUEVE</p>
+                <h2 className="font-['Orbitron'] mt-5 text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white">
+                  ¿Por qué elegirnos?
+                </h2>
+                <p className="mx-auto mt-6 max-w-lg text-base md:text-lg leading-relaxed text-gray-400 font-medium">
+                  Cada pieza reúne diseño, oficio y una tecnología pensada para acompañarte durante años.
+                </p>
+              </div>
+
+              <div className="mt-16 grid gap-6 md:grid-cols-3">
+                <ValueCard number="01" icon={<HeartIcon className="h-10 w-10" />} title="HECHO CON PASIÓN">
+                  Cuidamos cada curva y cada unión como si la pieza fuera para nuestro propio espacio. Porque la diferencia vive en los detalles.
+                </ValueCard>
+                <ValueCard number="02" icon={<BulbIcon className="h-10 w-10" />} title="TECNOLOGÍA DURADERA">
+                  LED premium de 12V, bajo consumo y materiales resistentes para una luz intensa, uniforme y preparada para durar años.
+                </ValueCard>
+                <ValueCard number="03" icon={<ToolsIcon className="h-10 w-10" />} title="PERSONALIZACIÓN TOTAL">
+                  Desde el primer boceto hasta el último brillo: tu logo, tu frase o tu idea loca fabricada exactamente a la medida de tu pared.
+                </ValueCard>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </>
+  );
+}

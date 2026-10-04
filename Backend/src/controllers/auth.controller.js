@@ -6,7 +6,7 @@ export const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Esta funcion busca el usuario
+    
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     
     if (result.rows.length === 0) {
@@ -15,17 +15,17 @@ export const login = async (req, res) => {
 
     const user = result.rows[0];
 
-    // Luego hace la comparacion de contraseñas 
+
     const isMatch = await bcrypt.compare(password, user.password);
     
     if (!isMatch) {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
-    // Para luego con esta funvbion crear el token de seguridad
+   
     const token = jwt.sign(
       { id: user.id, username: user.username }, 
-      'secret_key_super_segura', // ---> esto luego lo tengo que ponr en .env
+      'secret_key_super_segura', 
       { expiresIn: '2h' }
     );
 

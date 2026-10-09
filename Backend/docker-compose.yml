@@ -1,38 +1,35 @@
-version: '3.8'
-
 services:
-  # Servicio de Base de Datos
   db:
     image: postgres:15-alpine
     container_name: postgres_neonflex
     environment:
-      POSTGRES_USER: leandro
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: neonflex_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5434:5432" 
+      - "127.0.0.1:5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data 
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  # Servicio de Backend (Node)
   app:
     build: .
     container_name: backend_neonflex
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app             
-      - /app/node_modules  
+    env_file: .env
     environment:
-      - PORT=3000
-      
-      - DATABASE_URL=postgres://leandro:password123@db:5432/neonflex_db
-      
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - .:/app
+      - /app/node_modules
     depends_on:
-      - db 
+      db:
+        condition: service_healthy
     command: npm run dev
 
 volumes:

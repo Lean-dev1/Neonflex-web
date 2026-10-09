@@ -1,98 +1,105 @@
-import { pool } from '../config/db.js'; 
+import { pool } from '../config/db.js';
 import { uploadImage, deleteImage } from '../config/cloudinary.js';
-import fs from 'fs';
- 
-export const getProducts = async (req, res) => {
+import { removeTempFiles } from '../utils/files.js';
+
+// public_id es un dato interno: no se expone en los endpoints por seguridad
+const PUBLIC_COLUMNS = 'id, title, description, price, category, image_url, created_at';
+
+// Helper para evitar que un error al borrar en Cloudinary crashee toda la petición
+const discardImage = (publicId) =>
+  deleteImage(publicId).catch((e) => console.error('Imagen huérfana en Cloudinary:', publicId, e.message));
+
+export const getProducts = async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT * FROM products');
-    res.json(result.rows);
+    const limit = Math.min(Number.parseInt(req.query.limit, 10) || 100, 100);
+    const offset = Math.max(Number.parseInt(req.query.offset, 10) || 0, 0);
+    const { rows } = await pool.query(
+      `SELECT ${PUBLIC_COLUMNS} FROM products ORDER BY created_at DESC, id DESC LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    );
+    res.json(rows);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    next(error); // Delega el error al manejador global de index.js
   }
 };
 
-export const getProduct = async (req, res) => {
+export const getProduct = async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
-    if (result.rowCount === 0) return res.status(404).json({ message: 'Producto no encontrado' });
-    res.json(result.rows[0]);
+    const { rows } = await pool.query(`SELECT ${PUBLIC_COLUMNS} FROM products WHERE id = $1`, [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Producto no encontrado.' });
+    res.json(rows[0]);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
+  let uploaded = null;
   try {
     const { title, description, price, category } = req.body;
-    let image_url = null;
-    let public_id = null;
+    const file = req.files?.image;
+    
+    // Mantenemos nuestra validación estricta: la foto es obligatoria
+    if (!file) return res.status(400).json({ message: "La imagen del producto es obligatoria." });
 
-    if (req.files?.image) {
-      const result = await uploadImage(req.files.image.tempFilePath);
-      image_url = result.secure_url;
-      public_id = result.public_id;
-      
-      await fs.promises.unlink(req.files.image.tempFilePath);
-    }
+    uploaded = await uploadImage(file.tempFilePath);
 
-    const result = await pool.query(
-      'INSERT INTO products (title, description, price, category, image_url, public_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [title, description, price, category, image_url, public_id]
+    const { rows } = await pool.query(
+      `INSERT INTO products (title, description, price, category, image_url, public_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING ${PUBLIC_COLUMNS}`,
+      [title, description ?? null, price, category, uploaded.secure_url, uploaded.public_id]
     );
-    res.json(result.rows[0]);
+    res.status(201).json(rows[0]);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    // Si la DB falla (ej. faltó la categoría), borramos la imagen que recién subimos
+    if (uploaded) await discardImage(uploaded.public_id);  
+    next(error);
+  } finally {
+    await removeTempFiles(req.files);
   }
 };
 
-export const updateProduct = async (req, res) => {
-  const { id } = req.params;
-  const { title, description, price, category } = req.body;
-
+export const updateProduct = async (req, res, next) => {
+  let uploaded = null;
   try {
-    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ message: "Producto no encontrado" });
+    const { id } = req.params;
+    const { title, description, price, category } = req.body;
 
-    const currentProduct = result.rows[0];
-    let new_image_url = currentProduct.image_url;
-    let new_public_id = currentProduct.public_id;
+    const current = await pool.query('SELECT public_id FROM products WHERE id = $1', [id]);
+    if (current.rowCount === 0) return res.status(404).json({ message: 'Producto no encontrado.' });
 
-    if (req.files?.image) {
-      if (currentProduct.public_id) {
-        await deleteImage(currentProduct.public_id);
-      }
-      const uploadResult = await uploadImage(req.files.image.tempFilePath);
-      new_image_url = uploadResult.secure_url;
-      new_public_id = uploadResult.public_id;
-      
-      await fs.promises.unlink(req.files.image.tempFilePath);
+    const file = req.files?.image;
+    if (file) uploaded = await uploadImage(file.tempFilePath);   // 1) subir la nueva
+
+    const { rows } = await pool.query(                           // 2) actualizar la DB
+      `UPDATE products
+          SET title = $1, description = $2, price = $3, category = $4,
+              image_url = COALESCE($5, image_url), public_id = COALESCE($6, public_id)
+        WHERE id = $7
+        RETURNING ${PUBLIC_COLUMNS}`,
+      [title, description ?? null, price, category, uploaded?.secure_url ?? null, uploaded?.public_id ?? null, id]
+    );
+
+    if (uploaded && current.rows[0].public_id) {                 // 3) recién ahora borrar la vieja
+      await discardImage(current.rows[0].public_id);
     }
-
-    const updateQuery = `
-      UPDATE products 
-      SET title = $1, description = $2, price = $3, category = $4, image_url = $5, public_id = $6
-      WHERE id = $7 RETURNING *
-    `;
-    const updated = await pool.query(updateQuery, [title, description, price, category, new_image_url, new_public_id, id]);
-
-    res.json(updated.rows[0]);
+    res.json(rows[0]);
   } catch (error) {
-    console.error(error); 
-    return res.status(500).json({ message: error.message });
+    if (uploaded) await discardImage(uploaded.public_id);
+    next(error);
+  } finally {
+    await removeTempFiles(req.files);
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
-    const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [req.params.id]);
-    if (result.rowCount === 0) return res.status(404).json({ message: 'Producto no encontrado' });
-    
-    if (result.rows[0].public_id) {
-      await deleteImage(result.rows[0].public_id);
-    }
-    
-    return res.sendStatus(204);
+    const { rows } = await pool.query('DELETE FROM products WHERE id = $1 RETURNING public_id', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Producto no encontrado.' });
+
+    if (rows[0].public_id) await discardImage(rows[0].public_id);  
+    res.sendStatus(204);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    next(error);
   }
 };

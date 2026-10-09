@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import api from '../api/axios'; 
-import bgLadrillos from '../assets/images/fondo.png';
+import bgLadrillos from '../assets/images/fondo.webp';
 
 const categories = ["Todos", "Frases", "Figuras", "Negocios"];
 const sortOptions = ["Novedades", "Menor precio", "Mayor precio"];

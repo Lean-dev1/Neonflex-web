@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import bgLadrillos from '../assets/images/fondo.png';
+import bgLadrillos from '../assets/images/fondo.webp';
 import api from '../api/axios';
 
 const colors = [

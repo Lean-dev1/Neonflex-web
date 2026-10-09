@@ -4,7 +4,7 @@ import { FaWhatsapp, FaArrowRight, FaShoppingBag, FaCommentAlt, FaChevronLeft, F
 import api from '../api/axios';
 
 import imgLumi from '../assets/images/lumi.png';
-import bgLadrillos from '../assets/images/fondo.png';
+import bgLadrillos from '../assets/images/fondo.webp';
 
 const stats = [
   { value: "+500", label: "PROYECTOS" },

@@ -1,18 +1,21 @@
 import { v2 as cloudinary } from 'cloudinary';
-
+import { env } from './env.js';
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: env.cloudinary.cloudName,
+  api_key: env.cloudinary.apiKey,
+  api_secret: env.cloudinary.apiSecret,
+  secure: true,
 });
 
-export const uploadImage = async (filePath) => {
-  return await cloudinary.uploader.upload(filePath, {
+export const uploadImage = (filePath) =>
+  cloudinary.uploader.upload(filePath, {
     folder: 'neonflex_products',
+    resource_type: 'image',
+    allowed_formats: ['jpg', 'png', 'webp'], // Validación estricta en el servidor de destino
+    format: 'webp',
+    transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto' }], // Previene bombas de descompresión
+    timeout: 30_000,
   });
-};
- 
-export const deleteImage = async (publicId) => {
-  return await cloudinary.uploader.destroy(publicId);
-};
+
+export const deleteImage = (publicId) => cloudinary.uploader.destroy(publicId, { invalidate: true });

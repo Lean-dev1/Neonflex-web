@@ -1,5 +1,5 @@
 import React from 'react';
-import bgLadrillos from '../assets/images/fondo.png';
+import bgLadrillos from '../assets/images/fondo.webp';
 
 
 function HeartIcon({ className }) {

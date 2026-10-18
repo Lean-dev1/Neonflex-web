@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import bgLadrillos from '../assets/images/fondo.webp';
 import api from '../api/axios';
+import { validateFile, IMAGE_TYPES } from '../utils/validateFile';
 
 const colors = [
   { name: "Blanco frío", value: "#f4fbff" },
@@ -55,13 +56,18 @@ export default function Presupuesto() {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      setFileObjeto(file);
-    } else {
-      setFileName("");
+    const problem = file ? validateFile(file, { types: IMAGE_TYPES }) : null;
+
+    if (!file || problem) {
+      e.target.value = '';
+      setFileName('');
       setFileObjeto(null);
+      setFeedback(problem ? { type: 'error', message: problem } : { type: '', message: '' });
+      return;
     }
+    setFeedback({ type: '', message: '' });
+    setFileName(file.name);
+    setFileObjeto(file);
   };
 
   const handleSubmit = async (e) => {

@@ -10,11 +10,11 @@ cloudinary.config({
 
 export const uploadImage = (filePath) =>
   cloudinary.uploader.upload(filePath, {
-    folder: 'neonflex_products',
+    folder: env.constants.CLOUDINARY_FOLDER, // Usamos la constante
     resource_type: 'image',
-    allowed_formats: ['jpg', 'png', 'webp'], // Validación estricta en el servidor de destino
+    allowed_formats: ['jpg', 'png', 'webp'],
     format: 'webp',
-    transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto' }], // Previene bombas de descompresión
+    transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto' }],
     timeout: 30_000,
   });
 

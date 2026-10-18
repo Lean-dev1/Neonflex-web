@@ -1,15 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { isAuthenticated } from '../utils/auth';
 
 const ProtectedRoute = () => {
-  const token = localStorage.getItem('token');
-  
-  // Si no hay token, te manda al login
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Si hay token, te deja pasar 
-  return <Outlet />;
+  // Si el token es válido y no expiró, renderiza el componente hijo. 
+  // Si es falso, corrupto o vencido, te manda al login reemplazando el historial.
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

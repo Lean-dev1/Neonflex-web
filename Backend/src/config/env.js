@@ -30,7 +30,7 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5174',
-  publicHost: process.env.PUBLIC_HOST || 'localhost:3000', // El dominio de tu backend
+  publicHost: process.env.PUBLIC_HOST || 'localhost:3000',
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
@@ -39,5 +39,11 @@ export const env = {
   email: { 
     user: process.env.EMAIL_USER, 
     pass: process.env.EMAIL_PASS 
+  },
+  
+  constants: {
+    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5 MB
+    CLOUDINARY_FOLDER: 'neonflex_products',
+    JWT_EXPIRES_IN: '2h'
   }
 };

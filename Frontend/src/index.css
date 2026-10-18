@@ -8,3 +8,7 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+html {
+  font-size: 14.2px; /* Por defecto los navegadores usan 16px (equivale a un ~85% de zoom) */
+}

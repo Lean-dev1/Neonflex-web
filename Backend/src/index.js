@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import { env } from './config/env.js';
 import authRoutes from './routes/auth.routes.js';
 import productRoutes from './routes/products.routes.js';
-import cotizacionesRoutes from './routes/cotizaciones.js'; // Asegurate de que el nombre coincida con tu archivo
+import cotizacionesRoutes from './routes/cotizaciones.routes.js'; // Asegurate de que el nombre coincida con tu archivo
 import { globalLimiter } from './middlewares/rateLimiters.js';
 
 const app = express();

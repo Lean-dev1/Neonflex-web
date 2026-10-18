@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import api from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaLock, FaUser, FaArrowLeft } from 'react-icons/fa';
+import { setToken } from '../utils/auth';
 
 const Login = () => {
   
@@ -16,7 +17,7 @@ const Login = () => {
     try {
       const res = await api.post('/auth/login', form);
       
-      localStorage.setItem('token', res.data.token);
+      setToken(res.data.token);
       navigate('/admin');
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión');

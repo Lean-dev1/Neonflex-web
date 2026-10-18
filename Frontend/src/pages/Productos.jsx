@@ -3,10 +3,17 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios'; 
 import bgLadrillos from '../assets/images/fondo.webp';
 
-const categories = ["Todos", "Frases", "Figuras", "Negocios"];
+// Mapeo inteligente de categorías: Lo que lee el usuario vs Lo que busca en la base de datos
+const CATEGORIES_MAP = {
+  "Todos": "Todos",
+  "Textos y Frases": "frases",
+  "Figuras": "figuras",
+  "Negocios": "negocios"
+};
+const categoryLabels = Object.keys(CATEGORIES_MAP);
+
 const sortOptions = ["Novedades", "Menor precio", "Mayor precio"];
 const waLink = "https://wa.me/5491164477337";
-
 
 function Icon({ name, size = 18 }) {
   const paths = {
@@ -35,7 +42,6 @@ function Icon({ name, size = 18 }) {
   );
 }
 
-
 function ProductCard({ product }) {
   const formattedPrice = Math.round(product.price).toLocaleString("es-AR");
   const message = encodeURIComponent(`Hola NeonFlexPremium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);
@@ -60,7 +66,10 @@ function ProductCard({ product }) {
 
       <div className="p-3 md:p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-center text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-1.5">
-          <span className="text-cyan-400/70">{product.category === 'carteleria' ? 'Catálogo' : product.category}</span>
+          {/* Asignamos la etiqueta visual según el valor de la base de datos */}
+          <span className="text-cyan-400/70">
+            {product.category === 'logos' ? 'Logos' : 'Textos y Frases'}
+          </span>
           <span>COD-{product.id}</span>
         </div>
         
@@ -74,9 +83,7 @@ function ProductCard({ product }) {
               <span className="block text-[8px] text-gray-500 font-bold tracking-[0.2em] uppercase mb-0.5">Precio</span>
               <p className="text-white font-['Orbitron'] font-black text-base sm:text-lg">${formattedPrice}</p>
             </div>
-            {product.medidas && (
-              <span className="text-[9px] text-gray-400 font-bold tracking-widest uppercase">{product.medidas}</span>
-            )}
+            {/* El bloque de medidas fue eliminado ya que la BD no lo usa */}
           </div>
           
           <a
@@ -93,7 +100,6 @@ function ProductCard({ product }) {
   );
 }
 
-
 export default function Productos() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -106,8 +112,8 @@ export default function Productos() {
     const fetchProducts = async () => {
       try {
         const res = await api.get('/products');
-        const stockProducts = res.data.filter(p => p.category !== 'portfolio');
-        setProducts(stockProducts);
+        // Ya no filtramos "portfolio" porque todos los productos que vienen de la DB son del catálogo (frases o logos)
+        setProducts(res.data);
       } catch (error) {
         console.error("Error cargando el catálogo:", error);
       } finally {
@@ -120,12 +126,16 @@ export default function Productos() {
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
       const matchesSearch = product.title?.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesCategory = category === "Todos" || product.category === category; 
+      
+      // Traducimos el filtro visual al valor real de la base de datos
+      const targetCategory = CATEGORIES_MAP[category];
+      const matchesCategory = targetCategory === "Todos" || product.category === targetCategory; 
+      
       return matchesSearch && matchesCategory;
     });
 
-    if (sortOrder === "Menor precio") return result.sort((a, b) => a.price - b.price);
-    if (sortOrder === "Mayor precio") return result.sort((a, b) => b.price - a.price);
+    if (sortOrder === "Menor precio") return result.sort((a, b) => Number(a.price) - Number(b.price));
+    if (sortOrder === "Mayor precio") return result.sort((a, b) => Number(b.price) - Number(a.price));
     if (sortOrder === "Novedades") return result.sort((a, b) => b.id - a.id);
     
     return result;
@@ -139,7 +149,6 @@ export default function Productos() {
 
       <div className="relative text-gray-300 font-['Rajdhani'] min-h-screen selection:bg-cyan-400 selection:text-black">
         
-       
         <div 
           className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${bgLadrillos})` }}
@@ -153,7 +162,6 @@ export default function Productos() {
         <div className="relative z-10 pt-24 pb-20">
           <section className="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
             
-          
             <aside className="sticky top-28 hidden lg:flex flex-col gap-6">
               
               <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/5">
@@ -179,9 +187,13 @@ export default function Productos() {
                   <Icon name="filter" size={12} /> CATEGORÍAS
                 </h3>
                 <div className="flex flex-col gap-2">
-                  {categories.map((item) => {
-                    const count = item === "Todos" ? products.length : products.filter((p) => p.category === item).length;
+                  {categoryLabels.map((item) => {
+                    const targetCat = CATEGORIES_MAP[item];
+                    const count = targetCat === "Todos" 
+                      ? products.length 
+                      : products.filter((p) => p.category === targetCat).length;
                     const isActive = category === item;
+                    
                     return (
                       <button
                         key={item}
@@ -229,7 +241,6 @@ export default function Productos() {
               </div>
             </aside>
 
-           
             <div className="flex flex-col w-full">
               
               <div className="lg:hidden mb-6 flex flex-col gap-4">
@@ -241,7 +252,7 @@ export default function Productos() {
                     className="w-full bg-[#0a0a0f]/90 backdrop-blur-md border border-white/10 rounded-sm py-3 px-4 text-white text-sm focus:border-cyan-400/50 outline-none"
                   />
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                   {categories.map(item => (
+                   {categoryLabels.map(item => (
                      <button key={item} onClick={() => setCategory(item)} className={`whitespace-nowrap px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border ${category === item ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'bg-[#0a0a0f]/90 backdrop-blur-md text-gray-400 border-white/5'}`}>
                        {item}
                      </button>

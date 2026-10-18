@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ScrollToTop from './components/ScrollToTop';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieBanner from './components/AvisoPrivacidad.jsx'; 

@@ -2,29 +2,32 @@ import React, { useState, useEffect, useRef } from 'react';
 import api from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaTrash, FaPlus, FaPen, FaTimes, FaSignOutAlt, FaCamera, FaArrowLeft } from 'react-icons/fa';
+// Agregá esta línea junto a los otros imports
+import { clearToken } from '../utils/auth';
+import { validateFile } from '../utils/validateFile';
 
 const Admin = () => {
   const [products, setProducts] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const [publishType, setPublishType] = useState('stock'); 
-
-  // Se agregó 'medidas' al estado inicial
-  const [form, setForm] = useState({ title: '', price: '', description: '', medidas: '' });
+  
+  // Actualizado: La categoría por defecto ahora es 'frases' y se elimina 'medidas'
+  const [form, setForm] = useState({ title: '', price: '', description: '', category: 'frases' });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleLogout = () => { 
-    localStorage.removeItem('token'); 
-    navigate('/login'); 
-  };
+
+  const handleLogout = () => {
+    clearToken();
+    navigate('/login', { replace: true });}
 
   const fetchProducts = async () => {
     try {
       const res = await api.get('/products');
       setProducts(res.data); 
     } catch (error) { 
+      // El backend ahora responde 401 consistente para tokens vencidos o ausentes
       if(error.response && error.response.status === 401) handleLogout(); 
     }
   };
@@ -35,29 +38,31 @@ const Admin = () => {
     setForm({ ...form, [e.target.name]: e.target.value }); 
   };
   
-  const handleFileChange = (e) => { 
-    setFile(e.target.files[0]); 
+  const handleFileChange = (e) => {
+    const selected = e.target.files?.[0] ?? null;
+    const problem = validateFile(selected);
+    if (problem) {
+      alert(problem);
+      e.target.value = ''; // Resetea el input para que pueda volver a elegir
+      setFile(null);
+      return;
+    }
+    setFile(selected);
   };
-
   const handleEdit = (product) => {
     setEditingId(product.id);
-    if (product.category === 'portfolio') { 
-      setPublishType('portfolio'); 
-    } else { 
-      setPublishType('stock'); 
-    }
     setForm({ 
       title: product.title, 
       price: product.price, 
       description: product.description || '',
-      medidas: product.medidas || '' // Carga la medida si existe en la base
+      category: product.category || 'frases'
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null); 
-    setForm({ title: '', price: '', description: '', medidas: '' }); 
+    setForm({ title: '', price: '', description: '', category: 'frases' }); 
     setFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -69,31 +74,26 @@ const Admin = () => {
     const formData = new FormData();
     formData.append('title', form.title);
     formData.append('description', form.description);
-    
-    if (publishType === 'portfolio') { 
-      formData.append('price', 0); 
-      formData.append('category', 'portfolio'); 
-    } else { 
-      formData.append('price', form.price); 
-      formData.append('category', 'carteleria'); 
-      formData.append('medidas', form.medidas); 
-    }
+    formData.append('price', form.price); 
+    formData.append('category', form.category); 
     
     if (file) formData.append('image', file);
     
     try {
       if (editingId) { 
         await api.put(`/products/${editingId}`, formData); 
-        alert("¡Actualizado correctamente! ✨"); 
+        alert("Actualizado correctamente"); 
       } else { 
         if (!file) return alert("¡Falta subir la foto!"); 
         await api.post('/products', formData); 
-        alert("¡Publicado con éxito! 🚀"); 
+        alert("Publicado con éxito"); 
       }
       handleCancelEdit(); 
       fetchProducts();
     } catch (error) { 
-      alert("Error: " + error.message); 
+      // Si el backend tira un error 400 por validación, mostramos el mensaje de la API
+      const errorMsg = error.response?.data?.message || error.message;
+      alert("Error: " + errorMsg); 
     } finally { 
       setLoading(false); 
     }
@@ -140,8 +140,8 @@ const Admin = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold flex items-center gap-3 text-white uppercase tracking-widest">
                 {editingId 
-                  ? <><FaPen className="text-cyan-400"/> Editando Publicación</> 
-                  : <><FaPlus className="text-cyan-400"/> Nueva Publicación</>}
+                  ? <><FaPen className="text-cyan-400"/> Editando Cartel</> 
+                  : <><FaPlus className="text-cyan-400"/> Nuevo Cartel</>}
               </h2>
               {editingId && (
                 <button onClick={handleCancelEdit} className="text-[11px] text-gray-400 hover:text-white flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-sm uppercase tracking-widest transition-colors">
@@ -152,58 +152,49 @@ const Admin = () => {
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
               
-              {/* Selector de Tipo */}
-              <div className="md:col-span-2 bg-[#1a1a22] p-4 rounded-sm border border-white/5 flex flex-col sm:flex-row gap-4 sm:gap-8">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input type="radio" checked={publishType === 'stock'} onChange={() => setPublishType('stock')} className="accent-cyan-400 w-4 h-4"/>
-                  <span className={`text-sm font-bold uppercase tracking-widest transition-colors ${publishType === 'stock' ? 'text-cyan-400' : 'text-gray-500 group-hover:text-gray-300'}`}>
-                    Catálogo / Venta
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input type="radio" checked={publishType === 'portfolio'} onChange={() => setPublishType('portfolio')} className="accent-purple-400 w-4 h-4"/>
-                  <span className={`text-sm font-bold uppercase tracking-widest transition-colors ${publishType === 'portfolio' ? 'text-purple-400' : 'text-gray-500 group-hover:text-gray-300'}`}>
-                    Trabajo a Medida (Portfolio)
-                  </span>
-                </label>
-              </div>
-
               {/* Título */}
-              <div className={`space-y-2 ${publishType === 'portfolio' ? 'md:col-span-2' : ''}`}>
+              <div className="space-y-2">
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Título / Nombre</label>
                 <input name="title" value={form.title} onChange={handleChange} placeholder="Ej: Cartel Abierto Neón" className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600" required />
               </div>
 
-              {/* Campos condicionales para Stock */}
-              {publishType === 'stock' && (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Precio ($)</label>
-                    <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Ej: 45000" className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600" required />
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Medidas</label>
-                    <input name="medidas" type="text" value={form.medidas} onChange={handleChange} placeholder="Ej: 50x30 cm" className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600" />
-                  </div>
-                </>
-              )}
-              
-              {/* Foto */}
-              <div className="md:col-span-2 space-y-2">
+              {/* Categoría */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Categoría</label>
+                <select name="category" value={form.category} onChange={handleChange} className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors" required>
+                  <option value="frases">Textos y frases</option>
+                  <option value="figuras">Figuras</option>
+                  <option value="negocios">Negocios</option>
+                </select>
+              </div>
+
+              {/* Precio */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Precio ($)</label>
+                <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Ej: 45000" className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600" required />
+              </div>
+
+              {/* Foto - Restringida a formatos seguros */}
+              <div className="space-y-2">
                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2"><FaCamera /> Subir Imagen</label>
-                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="w-full bg-[#1a1a22] p-2.5 rounded-sm border border-white/5 text-sm text-gray-400 file:bg-white/5 file:text-white file:border-0 file:rounded-sm file:px-4 file:py-1 file:font-bold file:uppercase file:tracking-widest file:text-[10px] hover:file:bg-white/10 cursor-pointer transition-colors" accept="image/*" />
+                 <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    className="w-full bg-[#1a1a22] p-2.5 rounded-sm border border-white/5 text-sm text-gray-400 file:bg-white/5 file:text-white file:border-0 file:rounded-sm file:px-4 file:py-1 file:font-bold file:uppercase file:tracking-widest file:text-[10px] hover:file:bg-white/10 cursor-pointer transition-colors" 
+                    accept="image/jpeg, image/png, image/webp" 
+                 />
+                 <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Máx 5MB (JPG, PNG, WEBP)</p>
               </div>
               
-              {/* Descripción / Historia */}
+              {/* Descripción */}
               <div className="md:col-span-2 space-y-2">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                  {publishType === 'portfolio' ? 'Historia del cartel' : 'Descripción detallada'}
-                </label>
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Descripción detallada</label>
                 <textarea 
                   name="description" 
                   value={form.description} 
                   onChange={handleChange} 
-                  placeholder={publishType === 'portfolio' ? 'Contá para quién fue, qué pidió el cliente o los detalles de este trabajo a medida...' : 'Escribí las características de este producto...'}
+                  placeholder="Escribí las características de este producto..."
                   className="w-full bg-[#1a1a22] p-3 rounded-sm border border-white/5 text-sm text-white focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600" 
                   rows="3"
                 ></textarea>
@@ -216,18 +207,16 @@ const Admin = () => {
                 className={`md:col-span-2 font-bold py-3.5 rounded-sm transition-all uppercase tracking-widest text-[13px] flex justify-center items-center gap-2 ${
                   loading 
                     ? 'bg-white/5 text-gray-500 cursor-not-allowed' 
-                    : (publishType === 'stock' 
-                        ? 'bg-cyan-500 hover:bg-cyan-400 text-[#050508]' 
-                        : 'bg-purple-500 hover:bg-purple-400 text-white')
+                    : 'bg-cyan-500 hover:bg-cyan-400 text-[#050508]'
                 }`}
               >
-                {loading ? "Procesando..." : (editingId ? "Guardar Cambios" : (publishType === 'stock' ? "Publicar en Catálogo" : "Subir al Portfolio"))}
+                {loading ? "Procesando..." : (editingId ? "Guardar Cambios" : "Publicar Cartel")}
               </button>
             </form>
           </div>
 
           {/* LISTADO DE PUBLICACIONES */}
-          <h2 className="text-lg font-bold mb-4 text-white uppercase tracking-widest">Inventario & Portfolio ({products.length})</h2>
+          <h2 className="text-lg font-bold mb-4 text-white uppercase tracking-widest">Inventario ({products.length})</h2>
           <div className="grid gap-3">
             {products.map(prod => (
               <div key={prod.id} className="bg-[#0a0a0f] p-3 rounded-sm flex flex-col sm:flex-row justify-between items-start sm:items-center border border-white/5 group hover:border-white/20 transition-colors gap-4">
@@ -236,13 +225,16 @@ const Admin = () => {
                   <div>
                     <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-1">{prod.title}</h3>
                     <div className="flex items-center gap-2">
-                      {prod.category === 'portfolio' 
-                        ? <span className="text-[9px] bg-purple-500/10 border border-purple-500/30 text-purple-400 px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">A Medida</span> 
-                        : <span className="text-[9px] bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">Catálogo</span>
-                      }
-                      {prod.category !== 'portfolio' && (
-                        <span className="text-gray-400 font-['Orbitron'] text-xs font-black">${Math.round(prod.price).toLocaleString('es-AR')}</span>
-                      )}
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest border ${
+                        prod.category === 'logos' 
+                          ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' 
+                          : 'bg-cyan-500/10 border-cyan-400/30 text-cyan-400'
+                      }`}>
+                        {prod.category === 'logos' ? 'Logos' : 'Frases'}
+                      </span>
+                      <span className="text-gray-400 font-['Orbitron'] text-xs font-black">
+                        ${Number(prod.price).toLocaleString('es-AR')}
+                      </span>
                     </div>
                   </div>
                 </div>

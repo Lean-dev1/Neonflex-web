@@ -44,7 +44,7 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white pt-28 pb-24 font-sans transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* --- NAVEGACIÓN SUPERIOR --- */}
+        {/* NAVEGACIÓN SUPERIOR */}
         <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500 mb-10">
           <Link to="/" className="hover:text-gray-900 dark:hover:text-white transition-colors">Inicio</Link>
           <span>/</span>
@@ -53,21 +53,21 @@ const ProductDetail = () => {
           <span className="text-gray-900 dark:text-white truncate">{product.title}</span>
         </nav>
 
-        {/* --- CONTENEDOR PRINCIPAL (LAYOUT 60/40) --- */}
+        {/* CONTENEDOR PRINCIPAL */}
         <div className="flex flex-col lg:flex-row gap-16 items-start">
           
-          {/* COLUMNA IZQUIERDA: Imagen Gigante (Limpia y a borde completo) */}
+          {/* COLUMNA IZQUIERDA: */}
           <div className="w-full lg:w-3/5 lg:sticky lg:top-32 relative">
              <div className="w-full aspect-square md:aspect-[4/3] bg-black rounded-3xl overflow-hidden border border-gray-200 dark:border-neutral-800 shadow-xl relative">
                 
-                {/* Imagen limpia ocupando 100% del encuadre, sin zoom ni brillos */}
+               
                 <img 
                   src={product.image_url} 
                   alt={product.title} 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 
-                {/* Insignia Premium */}
+               
                 <div className="absolute top-6 left-6 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md text-gray-900 dark:text-white text-[10px] font-black px-4 py-2 rounded-lg border border-gray-200/50 dark:border-neutral-700/50 uppercase tracking-widest z-20 shadow-lg flex items-center gap-2">
                    <FaStar className="text-yellow-500" /> Premium Quality
                 </div>
@@ -117,7 +117,7 @@ const ProductDetail = () => {
                </a>
             </div>
 
-            {/* --- BLOQUES DE SEGURIDAD (TRUST BADGES) --- */}
+            {/* BLOQUES DE SEGURIDAD*/}
             <div className="space-y-4">
                
                {/* Garantía */}

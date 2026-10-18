@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieBanner from './components/AvisoPrivacidad.jsx'; 
@@ -17,6 +18,7 @@ const ProductDetail = lazy(() => import('./pages/ProductDetail.jsx'));
 function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop />
       <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 dark:bg-neutral-950 dark:text-white transition-colors duration-300">
         <Navbar />
         <main className="flex-grow">

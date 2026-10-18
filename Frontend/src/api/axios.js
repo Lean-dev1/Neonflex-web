@@ -13,7 +13,7 @@ if (import.meta.env.PROD && !baseURL.startsWith('https://')) {
 }
 
 // Timeout de 15 segundos: ideal para los "cold starts" de Render
-const api = axios.create({ baseURL, timeout: 15_000 });
+const api = axios.create({ baseURL, timeout: 60000 });
 
 // INTERCEPTOR DE IDA
 api.interceptors.request.use((config) => {

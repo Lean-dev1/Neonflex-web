@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { FaWhatsapp } from 'react-icons/fa';
 import api from '../api/axios'; 
 import bgLadrillos from '../assets/images/fondo.webp';
 
@@ -10,8 +11,16 @@ const CATEGORIES_MAP = {
   "Figuras": "figuras",
   "Negocios": "negocios"
 };
-const categoryLabels = Object.keys(CATEGORIES_MAP);
 
+// Mapeo inverso para traducir el parámetro ?categoria= de la URL al nombre visual
+const URL_TO_CATEGORY_LABEL = {
+  "frases": "Textos y Frases",
+  "figuras": "Figuras",
+  "negocios": "Negocios",
+  "logos": "Negocios"
+};
+
+const categoryLabels = Object.keys(CATEGORIES_MAP);
 const sortOptions = ["Novedades", "Menor precio", "Mayor precio"];
 const waLink = "https://wa.me/5491164477337";
 
@@ -42,57 +51,62 @@ function Icon({ name, size = 18 }) {
   );
 }
 
+function getCategoryDisplayName(dbCategory) {
+  const cat = dbCategory?.toLowerCase();
+  if (cat === 'logos' || cat === 'negocios') return 'Negocios / Logos';
+  if (cat === 'figuras') return 'Figuras';
+  return 'Textos y Frases';
+}
+
 function ProductCard({ product }) {
   const formattedPrice = Math.round(product.price).toLocaleString("es-AR");
-  const message = encodeURIComponent(`Hola NeonFlexPremium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);
+  const message = encodeURIComponent(`Hola NeonFlex Premium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);
 
   return (
-    <article className="bg-[#111117] border border-white/5 hover:border-cyan-400/30 rounded-sm flex flex-col h-full group backdrop-blur-sm">
+    <article className="bg-[#111117]/90 border border-white/10 hover:border-cyan-400/50 hover:-translate-y-1 transition-all duration-300 rounded-sm flex flex-col h-full group backdrop-blur-sm overflow-hidden">
       
-      <div className="relative aspect-square bg-black overflow-hidden border-b border-white/5">
+      <div className="relative aspect-square bg-black overflow-hidden border-b border-white/10">
         <img 
           src={product.image_url} 
           alt={product.title} 
           loading="lazy" 
           decoding="async"
-          className="w-full h-full object-cover group-hover:scale-105 group-hover:saturate-100 filter saturate-90 transition-transform duration-500 will-change-transform" 
+          className="w-full h-full object-cover group-hover:scale-105 group-hover:saturate-100 filter saturate-95 transition-transform duration-500 will-change-transform" 
         />
         
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div className="absolute top-2 left-2 bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-[8px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-widest z-10 flex items-center gap-1 backdrop-blur-sm">
-          <span className="w-1 h-1 bg-cyan-400 rounded-full animate-pulse"></span> STOCK
+        <div className="absolute top-2.5 left-2.5 bg-[#050508]/80 border border-cyan-400/40 text-cyan-400 text-[8px] font-['Orbitron'] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest z-10 flex items-center gap-1.5 backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> STOCK
         </div>
       </div>
 
-      <div className="p-3 md:p-4 flex flex-col flex-grow">
+      <div className="p-3.5 md:p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-center text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-1.5">
-          {/* Asignamos la etiqueta visual según el valor de la base de datos */}
-          <span className="text-cyan-400/70">
-            {product.category === 'logos' ? 'Logos' : 'Textos y Frases'}
+          <span className="text-cyan-400/80">
+            {getCategoryDisplayName(product.category)}
           </span>
           <span>COD-{product.id}</span>
         </div>
         
-        <h2 className="text-white font-['Orbitron'] font-bold text-xs sm:text-sm tracking-wider uppercase mb-3 line-clamp-2">
+        <h2 className="text-white font-['Orbitron'] font-bold text-xs sm:text-sm tracking-wider uppercase mb-3 line-clamp-2 group-hover:text-cyan-400 transition-colors">
           {product.title}
         </h2>
         
-        <div className="mt-auto pt-3 border-t border-white/5 flex flex-col gap-2">
-          <div className="flex justify-between items-end">
-            <div>
-              <span className="block text-[8px] text-gray-500 font-bold tracking-[0.2em] uppercase mb-0.5">Precio</span>
-              <p className="text-white font-['Orbitron'] font-black text-base sm:text-lg">${formattedPrice}</p>
-            </div>
-            {/* El bloque de medidas fue eliminado ya que la BD no lo usa */}
-          </div>
+        <div className="mt-auto pt-3 border-t border-white/10 flex flex-col">
+          <p className="text-white font-['Orbitron'] font-black text-base sm:text-lg leading-none mb-1">
+            $ {formattedPrice}
+          </p>
+          <p className="text-[11px] text-gray-400 font-medium mb-3.5 leading-snug">
+            Precio final en efectivo o transferencia
+          </p>
           
           <a
             href={`${waLink}?text=${message}`}
             target="_blank"
             rel="noreferrer"
-            className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#050508] font-bold py-2 px-3 rounded-sm flex items-center justify-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors mt-2"
+            className="w-full bg-cyan-500 hover:bg-white text-[#050508] font-['Orbitron'] font-bold py-2.5 px-3 rounded-sm flex items-center justify-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors shadow-[0_0_12px_rgba(0,240,255,0.2)]"
           >
-            <Icon name="bag" size={12} /> COMPRAR
+            <FaWhatsapp size={14} /> Comprar por WhatsApp
           </a>
         </div>
       </div>
@@ -101,6 +115,7 @@ function ProductCard({ product }) {
 }
 
 export default function Productos() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -108,12 +123,30 @@ export default function Productos() {
   const [category, setCategory] = useState("Todos");
   const [sortOrder, setSortOrder] = useState("Novedades");
 
+  // 1. Escuchar cambios en la URL (?categoria=... y ?buscar=...) desde la Navbar o el Home
+  useEffect(() => {
+    const catParam = searchParams.get("categoria")?.toLowerCase();
+    const searchParam = searchParams.get("buscar");
+
+    if (catParam && URL_TO_CATEGORY_LABEL[catParam]) {
+      setCategory(URL_TO_CATEGORY_LABEL[catParam]);
+    } else if (!catParam) {
+      setCategory("Todos");
+    }
+
+    if (searchParam !== null) {
+      setSearch(searchParam);
+    } else {
+      setSearch("");
+    }
+  }, [searchParams]);
+
+  // 2. Cargar productos desde el Backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await api.get('/products');
-        // Ya no filtramos "portfolio" porque todos los productos que vienen de la DB son del catálogo (frases o logos)
-        setProducts(res.data);
+        setProducts(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.error("Error cargando el catálogo:", error);
       } finally {
@@ -123,27 +156,54 @@ export default function Productos() {
     fetchProducts();
   }, []);
 
+  // Función auxiliar para verificar si un producto pertenece a una categoría
+  const matchesTargetCategory = (productCategory, targetCat) => {
+    if (targetCat === "Todos") return true;
+    const prodCat = productCategory?.toLowerCase();
+    if (targetCat === "negocios") {
+      return prodCat === "negocios" || prodCat === "logos";
+    }
+    return prodCat === targetCat;
+  };
+
+  // Cambiar categoría y limpiar o actualizar la URL
+  const handleCategoryClick = (label) => {
+    setCategory(label);
+    const targetCat = CATEGORIES_MAP[label];
+    const nextParams = new URLSearchParams(searchParams);
+    if (targetCat === "Todos") {
+      nextParams.delete("categoria");
+    } else {
+      nextParams.set("categoria", targetCat);
+    }
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setCategory("Todos");
+    setSearchParams({}, { replace: true });
+  };
+
   const filteredProducts = useMemo(() => {
+    const targetCategory = CATEGORIES_MAP[category];
+
     let result = products.filter((product) => {
       const matchesSearch = product.title?.toLowerCase().includes(search.trim().toLowerCase());
-      
-      // Traducimos el filtro visual al valor real de la base de datos
-      const targetCategory = CATEGORIES_MAP[category];
-      const matchesCategory = targetCategory === "Todos" || product.category === targetCategory; 
-      
+      const matchesCategory = matchesTargetCategory(product.category, targetCategory);
       return matchesSearch && matchesCategory;
     });
 
-    if (sortOrder === "Menor precio") return result.sort((a, b) => Number(a.price) - Number(b.price));
-    if (sortOrder === "Mayor precio") return result.sort((a, b) => Number(b.price) - Number(a.price));
-    if (sortOrder === "Novedades") return result.sort((a, b) => b.id - a.id);
+    if (sortOrder === "Menor precio") return [...result].sort((a, b) => Number(a.price) - Number(b.price));
+    if (sortOrder === "Mayor precio") return [...result].sort((a, b) => Number(b.price) - Number(a.price));
+    if (sortOrder === "Novedades") return [...result].sort((a, b) => b.id - a.id);
     
     return result;
   }, [products, category, search, sortOrder]);
 
   return (
     <>
-     <style>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
       `}</style>
 
@@ -154,17 +214,17 @@ export default function Productos() {
           style={{ backgroundImage: `url(${bgLadrillos})` }}
         >
           <div className="absolute inset-0 bg-[#050508]/90"></div>
-          
           <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.06)_0%,transparent_70%)] pointer-events-none"></div>
           <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,0,0,0.06)_0%,transparent_70%)] pointer-events-none"></div>
         </div>
         
-        <div className="relative z-10 pt-24 pb-20">
+        {/* pt-36 / md:pt-44 compensa la altura de la nueva Navbar de 3 pisos */}
+        <div className="relative z-10 pt-36 md:pt-44 pb-20">
           <section className="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
             
-            <aside className="sticky top-28 hidden lg:flex flex-col gap-6">
+            <aside className="sticky top-40 hidden lg:flex flex-col gap-6">
               
-              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/5">
+              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/10">
                 <h3 className="text-white text-xs font-bold font-['Orbitron'] tracking-widest uppercase mb-4 flex items-center gap-2">
                   <Icon name="search" size={12} /> BÚSQUEDA
                 </h3>
@@ -177,38 +237,40 @@ export default function Productos() {
                     className="w-full bg-[#1a1a22] border border-white/10 rounded-sm py-3 px-4 pl-10 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors placeholder:text-gray-600"
                   />
                   <div className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
-                     <Icon name="search" size={14} />
+                    <Icon name="search" size={14} />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/5">
+              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/10">
                 <h3 className="text-white text-xs font-bold font-['Orbitron'] tracking-widest uppercase mb-4 flex items-center gap-2">
                   <Icon name="filter" size={12} /> CATEGORÍAS
                 </h3>
                 <div className="flex flex-col gap-2">
                   {categoryLabels.map((item) => {
                     const targetCat = CATEGORIES_MAP[item];
-                    const count = targetCat === "Todos" 
-                      ? products.length 
-                      : products.filter((p) => p.category === targetCat).length;
+                    const count = products.filter((p) => matchesTargetCategory(p.category, targetCat)).length;
                     const isActive = category === item;
                     
                     return (
                       <button
                         key={item}
-                        onClick={() => setCategory(item)}
-                        className={`flex justify-between items-center py-2.5 px-3 rounded-sm text-xs tracking-widest font-bold uppercase transition-all ${isActive ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-gray-400 hover:bg-white/5 border border-transparent'}`}
+                        onClick={() => handleCategoryClick(item)}
+                        className={`flex justify-between items-center py-2.5 px-3 rounded-sm text-xs tracking-widest font-bold uppercase transition-all ${
+                          isActive 
+                            ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' 
+                            : 'text-gray-400 hover:bg-white/5 border border-transparent'
+                        }`}
                       >
                         <span>{item === "Todos" ? "Catálogo Completo" : item}</span>
-                        <b className={`font-['Orbitron'] opacity-60 ${isActive ? 'text-cyan-400' : ''}`}>{count}</b>
+                        <b className={`font-['Orbitron'] opacity-70 ${isActive ? 'text-cyan-400' : ''}`}>{count}</b>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/5">
+              <div className="bg-[#0a0a0f]/90 backdrop-blur-md p-5 rounded-sm border border-white/10">
                 <h3 className="text-white text-xs font-bold font-['Orbitron'] tracking-widest uppercase mb-4 flex items-center gap-2">
                   <Icon name="sort" size={12} /> ORDENAR POR
                 </h3>
@@ -217,7 +279,11 @@ export default function Productos() {
                     <button
                       key={option}
                       onClick={() => setSortOrder(option)}
-                      className={`flex justify-between items-center py-2.5 px-3 rounded-sm text-xs tracking-widest font-bold uppercase transition-all ${sortOrder === option ? 'text-white bg-white/5 border border-white/10' : 'text-gray-500 hover:text-gray-300 border border-transparent'}`}
+                      className={`flex justify-between items-center py-2.5 px-3 rounded-sm text-xs tracking-widest font-bold uppercase transition-all ${
+                        sortOrder === option 
+                          ? 'text-white bg-white/5 border border-white/15' 
+                          : 'text-gray-500 hover:text-gray-300 border border-transparent'
+                      }`}
                     >
                       <span>{option}</span>
                       {option === "Novedades" && sortOrder === option && <Icon name="bolt" size={12} />}
@@ -232,9 +298,9 @@ export default function Productos() {
                 <div className="relative z-10">
                   <span className="text-cyan-400 text-[9px] font-bold uppercase tracking-[0.25em] mb-2 block">CUSTOM LAB</span>
                   <h3 className="text-white font-['Orbitron'] text-sm font-bold uppercase tracking-wider mb-2">¿Querés tu propio logo?</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed mb-6">Cotizamos tu idea a medida, con diseño digital 3D sin cargo.</p>
+                  <p className="text-gray-400 text-xs leading-relaxed mb-6">Cotizamos tu idea a medida, con diseño digital sin cargo en 24 h.</p>
                   
-                  <Link to="/presupuesto" className="w-full inline-flex justify-center items-center gap-2 bg-transparent border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-bold py-2.5 rounded-sm text-[11px] tracking-widest uppercase transition-colors">
+                  <Link to="/presupuesto" className="w-full inline-flex justify-center items-center gap-2 bg-transparent border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-['Orbitron'] font-bold py-2.5 rounded-sm text-[11px] tracking-widest uppercase transition-colors">
                     COTIZAR AHORA <Icon name="arrow" size={12} />
                   </Link>
                 </div>
@@ -243,27 +309,47 @@ export default function Productos() {
 
             <div className="flex flex-col w-full">
               
+              {/* Controles Mobile */}
               <div className="lg:hidden mb-6 flex flex-col gap-4">
                 <input
-                    type="search"
-                    placeholder="Buscar diseño..."
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    className="w-full bg-[#0a0a0f]/90 backdrop-blur-md border border-white/10 rounded-sm py-3 px-4 text-white text-sm focus:border-cyan-400/50 outline-none"
-                  />
+                  type="search"
+                  placeholder="Buscar diseño..."
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  className="w-full bg-[#0a0a0f]/90 backdrop-blur-md border border-white/10 rounded-sm py-3 px-4 text-white text-sm focus:border-cyan-400/50 outline-none"
+                />
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                   {categoryLabels.map(item => (
-                     <button key={item} onClick={() => setCategory(item)} className={`whitespace-nowrap px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border ${category === item ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'bg-[#0a0a0f]/90 backdrop-blur-md text-gray-400 border-white/5'}`}>
-                       {item}
-                     </button>
-                   ))}
+                  {categoryLabels.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => handleCategoryClick(item)}
+                      className={`whitespace-nowrap px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border ${
+                        category === item
+                          ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
+                          : 'bg-[#0a0a0f]/90 backdrop-blur-md text-gray-400 border-white/10'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <div className="flex justify-between items-center bg-[#0a0a0f]/90 backdrop-blur-md border border-white/5 rounded-sm p-4 mb-6">
-                <p className="text-xs text-gray-400 tracking-widest uppercase font-bold">
-                  MOSTRANDO <b className="text-white">{filteredProducts.length}</b> {filteredProducts.length === 1 ? "DISEÑO" : "DISEÑOS"}
-                </p>
+              <div className="flex justify-between items-center bg-[#0a0a0f]/90 backdrop-blur-md border border-white/10 rounded-sm p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <p className="text-xs text-gray-400 tracking-widest uppercase font-bold">
+                    MOSTRANDO <b className="text-white">{filteredProducts.length}</b> {filteredProducts.length === 1 ? "DISEÑO" : "DISEÑOS"}
+                  </p>
+                  {(category !== "Todos" || search.trim() !== "") && (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="text-[10px] font-['Orbitron'] text-cyan-400 hover:underline uppercase tracking-wider"
+                    >
+                      Limpiar filtros
+                    </button>
+                  )}
+                </div>
                 <span className="hidden sm:inline-block text-cyan-400 font-['Orbitron'] text-[10px] tracking-[0.2em] font-bold bg-cyan-500/10 px-3 py-1 rounded-sm border border-cyan-400/20">
                   STOCK EN TIEMPO REAL
                 </span>
@@ -274,20 +360,20 @@ export default function Productos() {
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
                 </div>
               ) : filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center bg-[#0a0a0f]/90 backdrop-blur-md border border-white/5 rounded-sm p-16 text-center h-[50vh]">
+                <div className="flex flex-col items-center justify-center bg-[#0a0a0f]/90 backdrop-blur-md border border-white/10 rounded-sm p-16 text-center h-[50vh]">
                   <div className="text-gray-600 mb-6 opacity-50"><Icon name="search" size={48} /></div>
                   <h2 className="text-white font-['Orbitron'] text-xl font-bold uppercase tracking-wider mb-2">Sin Resultados</h2>
                   <p className="text-gray-500 text-sm mb-8">No encontramos carteles que coincidan con tu búsqueda actual.</p>
                   <button
                     type="button"
-                    onClick={() => { setSearch(""); setCategory("Todos"); }}
-                    className="border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white font-bold px-6 py-3 rounded-sm transition-all text-xs tracking-widest uppercase"
+                    onClick={handleResetFilters}
+                    className="border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white font-['Orbitron'] font-bold px-6 py-3 rounded-sm transition-all text-xs tracking-widest uppercase"
                   >
                     VER CATÁLOGO COMPLETO
                   </button>

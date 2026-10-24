@@ -27,7 +27,7 @@ export default function AvisoPrivacidad() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-[#0a0a0f] border-t border-white/10 p-4 z-50 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="fixed bottom-16 left-0 w-full bg-[#0a0a0f] border-t border-white/10 p-4 z-50 flex flex-col md:flex-row justify-between items-center gap-4">
       <p className="text-sm text-gray-400">
         Usamos cookies para mejorar tu experiencia.
       </p>

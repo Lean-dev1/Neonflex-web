@@ -29,7 +29,7 @@ export const env = {
   port: Number(process.env.PORT) || 3000,
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
-  frontendUrl: process.env.FRONTEND_URL || 'https://neonflexpremium.netlify.app',
+  frontendUrl: process.env.FRONTEND_URL || 'https://neonflex-web.vercel.app/',
   publicHost: process.env.PUBLIC_HOST || 'localhost:3000',
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,

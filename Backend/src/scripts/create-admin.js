@@ -1,25 +1,29 @@
 import bcrypt from 'bcryptjs';
-import { pool } from '../config/db.js'; // Asegurate de que la ruta suba un nivel para encontrar config
+import { pool } from '../config/db.js'; // Ajustá la ruta si db.js está en otra carpeta, ej: './src/config/db.js'
 
-const username = process.argv[2];
-const password = process.env.ADMIN_PASSWORD;
+const resetUser = async () => {
+  const username = 'diego'; // Tu nombre de usuario
+  const plainPassword = 'neonflex2026'; // Tu nueva contraseña
+  
+  try {
+    // 1. Encriptamos la nueva contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(plainPassword, salt);
 
-if (!username || !password || password.length < 12) {
-  console.error("❌ Uso incorrecto o contraseña muy corta (mínimo 12 caracteres).");
-  console.error("👉 Ejemplo: ADMIN_PASSWORD='MiClaveSegura2026' node create-admin.js minombre");
-  process.exit(1);
-}
+    // 2. Actualizamos el usuario si existe, o lo creamos si la tabla estaba vacía
+    await pool.query(`
+      INSERT INTO users (username, password) 
+      VALUES ($1, $2)
+      ON CONFLICT (username) 
+      DO UPDATE SET password = EXCLUDED.password
+    `, [username, hashedPassword]);
 
-try {
-  const hash = await bcrypt.hash(password, 12);
-  await pool.query(
-    `INSERT INTO users (username, password) VALUES ($1, $2)
-     ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password`,
-    [username, hash]
-  );
-  console.log(`✅ Usuario "${username}" creado/actualizado exitosamente.`);
-} catch (error) {
-  console.error("❌ Error en la base de datos:", error.message);
-} finally {
-  await pool.end();
-}
+    console.log(`✅ Éxito: El usuario '${username}' está listo para usarse con la nueva contraseña.`);
+  } catch (error) {
+    console.error('❌ Error actualizando el usuario:', error);
+  } finally {
+    process.exit(0);
+  }
+};
+
+resetUser();

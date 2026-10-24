@@ -13,7 +13,7 @@ const Productos = lazy(() => import('./pages/Productos.jsx'));
 const Presupuesto = lazy(() => import('./pages/Presupuesto.jsx'));
 const Nosotros = lazy(() => import('./pages/Nosotros.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
-const ProductDetail = lazy(() => import('./pages/ProductDetail.jsx'));
+const ProductDetail = lazy(() => import('./components/ProductDetail.jsx'));
 
 function App() {
   return (

@@ -68,44 +68,6 @@ const benefits = [
   }
 ];
 
-const categories = [
-  {
-    name: "Frases",
-    subtitle: "Inspiración y actitud",
-    link: "/productos?categoria=frases",
-    accent: "from-cyan-500/20 via-cyan-500/5 to-transparent",
-    borderHover: "hover:border-cyan-400",
-    glow: "group-hover:shadow-[0_0_25px_rgba(0,240,255,0.2)]",
-    sampleText: "Good Vibes"
-  },
-  {
-    name: "Figuras",
-    subtitle: "Íconos y siluetas LED",
-    link: "/productos?categoria=figuras",
-    accent: "from-red-500/20 via-red-500/5 to-transparent",
-    borderHover: "hover:border-red-400",
-    glow: "group-hover:shadow-[0_0_25px_rgba(255,59,59,0.2)]",
-    sampleText: "⚡ ★ ♡"
-  },
-  {
-    name: "Negocios",
-    subtitle: "Logos y cartelería comercial",
-    link: "/productos?categoria=negocios",
-    accent: "from-blue-500/20 via-blue-500/5 to-transparent",
-    borderHover: "hover:border-blue-400",
-    glow: "group-hover:shadow-[0_0_25px_rgba(40,100,255,0.2)]",
-    sampleText: "OPEN 24H"
-  },
-  {
-    name: "A medida",
-    subtitle: "Tu boceto desde cero",
-    link: "/presupuesto",
-    accent: "from-purple-500/20 via-purple-500/5 to-transparent",
-    borderHover: "hover:border-purple-400",
-    glow: "group-hover:shadow-[0_0_25px_rgba(168,85,247,0.2)]",
-    sampleText: "Tu Idea"
-  }
-];
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -289,52 +251,6 @@ const Home = () => {
             </div>
           </section>
 
-          <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-              <div>
-                <p className="text-cyan-400 font-['Orbitron'] text-[10px] sm:text-xs font-bold tracking-[0.2em] mb-2 flex items-center gap-2 uppercase">
-                  <span className="w-5 h-[1px] bg-cyan-400"></span> Explorá por estilo
-                </p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white font-['Orbitron'] uppercase tracking-tight">
-                  Comprá por <span className="text-cyan-400 drop-shadow-[0_0_15px_rgba(0,240,255,0.3)]">categoría</span>
-                </h2>
-              </div>
-              <Link to="/productos" className="text-cyan-400 hover:text-white font-['Orbitron'] text-xs font-bold tracking-widest uppercase flex items-center gap-2 border-b border-cyan-400/40 pb-1 transition-colors">
-                Ver todo el catálogo <FaArrowRight size={10} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {categories.map((cat, idx) => (
-                <Link
-                  key={idx}
-                  to={cat.link}
-                  className={`group relative aspect-square bg-[#111117]/90 border border-white/10 rounded-sm overflow-hidden flex flex-col justify-between p-5 transition-all duration-300 hover:-translate-y-1 ${cat.borderHover} ${cat.glow}`}
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.accent} opacity-70 group-hover:opacity-100 transition-opacity`} />
-                  
-                  <div className="relative z-10 flex-1 flex items-center justify-center">
-                    <span className="font-['Varela_Round'] text-xl sm:text-2xl md:text-3xl text-white/80 group-hover:text-white group-hover:scale-105 transition-all text-center drop-shadow-[0_0_12px_rgba(0,240,255,0.5)]">
-                      {cat.sampleText}
-                    </span>
-                  </div>
-
-                  <div className="relative z-10 bg-[#050508]/90 border border-white/10 group-hover:border-cyan-400/40 rounded-sm p-3 backdrop-blur-md transition-colors">
-                    <div className="flex items-center justify-between">
-                      <span className="font-['Orbitron'] font-bold text-xs sm:text-sm text-white uppercase tracking-wider">
-                        {cat.name}
-                      </span>
-                      <FaArrowRight size={11} className="text-cyan-400 transform group-hover:translate-x-1 transition-transform" />
-                    </div>
-                    <p className="text-[11px] text-gray-400 font-medium mt-0.5 truncate">
-                      {cat.subtitle}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-
           {/* 4. ÚLTIMOS DISEÑOS CON APERTURA DE MODAL */}
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto border-t border-white/10 bg-[#0a0a0f]/40 backdrop-blur-sm overflow-hidden">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 relative z-10">
@@ -435,27 +351,12 @@ const Home = () => {
             </div>
           </section>
 
-          <section className="py-12 px-4 md:px-8 max-w-[1200px] mx-auto">
-            <div className="relative bg-[#111117]/90 border border-white/10 rounded-sm p-8 sm:p-12 md:p-16 text-center overflow-hidden shadow-2xl">
-              <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-cyan-500/10 blur-[80px] pointer-events-none" />
-              <blockquote className="relative z-10 max-w-3xl mx-auto font-['Orbitron'] text-lg sm:text-2xl md:text-3xl font-bold text-white leading-relaxed mb-4">
-                “No fabricamos neón en serie. Diseñamos la luz que hace <span className="text-cyan-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.4)]">único cada lugar</span>.”
-              </blockquote>
-              <p className="relative z-10 text-xs sm:text-sm font-['Orbitron'] tracking-[0.25em] text-gray-400 uppercase">
-                Taller NeonFlex Premium · Fabricación a medida
-              </p>
-            </div>
-          </section>
 
           <section className="bg-[#111117]/60 backdrop-blur-md border-y border-white/10 py-16 px-4 md:px-8">
             <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div className="relative aspect-[4/3] bg-black border border-white/10 rounded-sm overflow-hidden group shadow-2xl">
                 <img src={imgLumi} alt="Taller NeonFlex trabajando a medida" loading="lazy" decoding="async" className="w-full h-full object-cover filter contrast-110 saturate-90 group-hover:saturate-100 transition-all duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#050508]/80 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-4 right-4 bg-cyan-500 text-[#050508] px-3 py-1.5 font-['Orbitron'] font-black text-[10px] tracking-widest rounded-sm flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-[#050508] rounded-full animate-pulse"></span>
-                  MÁS DE 500 PROYECTOS A MEDIDA
-                </div>
               </div>
 
               <div>
@@ -473,7 +374,7 @@ const Home = () => {
                 <ol className="space-y-3 mb-8">
                   {[
                     ["Contanos tu idea", "Mandanos tu frase, logo o una imagen de referencia."],
-                    ["Recibí tu diseño", "Preparamos un mockup digital sin costo en menos de 24 h."],
+                    ["Recibí tu diseño", "Preparamos tu presupuesto sin costo en menos de 24 h."],
                     ["Lo hacemos real", "Fabricamos y te lo enviamos listo para colgar y enchufar."]
                   ].map(([title, desc], i) => (
                     <li key={i} className="flex items-start gap-4 p-3.5 border border-white/10 bg-[#0a0a0f]/70 rounded-sm hover:border-cyan-400/40 transition-colors">
@@ -498,9 +399,7 @@ const Home = () => {
           </section>
 
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto text-center">
-            <p className="text-cyan-400 font-['Orbitron'] text-[10px] sm:text-xs font-bold tracking-[0.2em] mb-2 uppercase">
-              Comunidad NeonFlex
-            </p>
+
             <h2 className="text-2xl sm:text-3xl font-black text-white font-['Orbitron'] uppercase tracking-tight mb-8">
               Seguinos en <span className="text-cyan-400">@neonflexpremium</span>
             </h2>

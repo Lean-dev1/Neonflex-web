@@ -90,9 +90,6 @@ const Footer = () => {
             
             {/* Columna 1: Sobre el Taller y Redes */}
             <div>
-              <h3 className="text-white font-['Orbitron'] font-bold uppercase tracking-wider text-sm mb-4">
-                NeonFlex <span className="text-cyan-400">Premium</span>
-              </h3>
               <p className="text-sm leading-relaxed mb-6 font-medium text-gray-400">
                 Carteles de neón flex LED y letras corpóreas hechos a medida en nuestro taller. Diseño propio con materiales 100% importados.
               </p>
@@ -136,7 +133,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link to="/productos?categoria=figuras" className="hover:text-cyan-400 transition-colors">
-                    Figuras LED
+                    Figuras
                   </Link>
                 </li>
                 <li>
@@ -151,7 +148,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link to="/nosotros" className="hover:text-cyan-400 transition-colors">
-                    Nuestro Taller
+                    Nosotros
                   </Link>
                 </li>
               </ul>
@@ -170,12 +167,12 @@ const Footer = () => {
                 </li>
                 <li>
                   <a href={`${waLink}?text=Hola! Quiero consultar sobre los envíos a domicilio.`} target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">
-                    Envíos y Entregas
+                    Envíos y Entregas a todo el pais
                   </a>
                 </li>
                 <li>
                   <a href={`${waLink}?text=Hola! Quiero consultar sobre la garantía de 6 meses.`} target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">
-                    Garantía Escrita (6 Meses)
+                    Garantía Escrita 
                   </a>
                 </li>
                 <li>
@@ -208,7 +205,7 @@ const Footer = () => {
                 <li>
                   <a href="mailto:ventas@neonflex.com.ar" className="flex items-center gap-3 group hover:text-white transition-colors">
                     <FaEnvelope className="text-cyan-400 shrink-0" size={14} />
-                    <span className="normal-case tracking-normal font-medium text-sm">ventas@neonflex.com.ar</span>
+                    <span className="normal-case tracking-normal font-medium text-sm">neonflexpremium08@gmail.com</span>
                   </a>
                 </li>
               </ul>
@@ -251,7 +248,7 @@ const Footer = () => {
           {/* 4. FILA INFERIOR: Copyright, Créditos y Acceso Admin */}
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 gap-4">
             <p>&copy; {new Date().getFullYear()} NeonFlex Premium. Todos los derechos reservados.</p>
-            <p>Desarrollado por Leandro Jerez & Faustina Retamar</p>
+            <p>Desarrollado por Leandro Jerez y Faustina Retamar</p>
             <div className="flex gap-6">
               <Link to="/admin" className="hover:text-cyan-400 transition-colors">
                 Acceso Interno

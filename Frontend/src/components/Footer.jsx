@@ -16,16 +16,6 @@ import logo from '../assets/images/neon.png';
 const waLink = "https://wa.me/5491164477337";
 const igLink = "https://www.instagram.com/neonflexpremium/";
 
-const Footer = () => {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setSubscribed(true);
-    setEmail("");
-  };
 
   return (
     <>
@@ -52,37 +42,6 @@ const Footer = () => {
             </div>
             
             {/* Formulario de Suscripción Funcional */}
-            <form onSubmit={handleSubscribe} className="w-full md:w-auto">
-              <label htmlFor="footer-newsletter" className="block text-white font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-xs mb-3">
-                Enterate de nuevos diseños
-              </label>
-              <div className="flex relative w-full md:w-96 group">
-                <input 
-                  id="footer-newsletter"
-                  type="email" 
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Tu correo electrónico" 
-                  className="w-full bg-[#0a0a0f] border border-white/15 rounded-l-sm py-3 px-4 text-white focus:outline-none focus:border-cyan-400 transition-colors placeholder:text-gray-600 text-sm font-medium" 
-                />
-                <button 
-                  type="submit"
-                  aria-label="Suscribirme"
-                  className="bg-cyan-500/15 border border-cyan-400/40 border-l-0 text-cyan-400 px-5 rounded-r-sm font-['Orbitron'] text-xs font-bold hover:bg-cyan-500 hover:text-[#050508] transition-all flex items-center justify-center gap-2 shrink-0"
-                >
-                  {subscribed ? (
-                    <>
-                      <FaCheck size={12} /> <span className="hidden sm:inline">LISTO</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="hidden sm:inline">UNIRME</span> <FaArrowRight size={12} />
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
           </div>
 
           {/* 2. GRILLA DE 4 COLUMNAS (Estructura Figma + Colores Cyberpunk) */}
@@ -90,9 +49,6 @@ const Footer = () => {
             
             {/* Columna 1: Sobre el Taller y Redes */}
             <div>
-              <h3 className="text-white font-['Orbitron'] font-bold uppercase tracking-wider text-sm mb-4">
-                NeonFlex <span className="text-cyan-400">Premium</span>
-              </h3>
               <p className="text-sm leading-relaxed mb-6 font-medium text-gray-400">
                 Carteles de neón flex LED y letras corpóreas hechos a medida en nuestro taller. Diseño propio con materiales 100% importados.
               </p>
@@ -136,7 +92,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link to="/productos?categoria=figuras" className="hover:text-cyan-400 transition-colors">
-                    Figuras LED
+                    Figuras
                   </Link>
                 </li>
                 <li>
@@ -151,7 +107,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link to="/nosotros" className="hover:text-cyan-400 transition-colors">
-                    Nuestro Taller
+                    Nosotros
                   </Link>
                 </li>
               </ul>
@@ -170,12 +126,12 @@ const Footer = () => {
                 </li>
                 <li>
                   <a href={`${waLink}?text=Hola! Quiero consultar sobre los envíos a domicilio.`} target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">
-                    Envíos y Entregas
+                    Envíos y Entregas a todo el pais
                   </a>
                 </li>
                 <li>
                   <a href={`${waLink}?text=Hola! Quiero consultar sobre la garantía de 6 meses.`} target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors">
-                    Garantía Escrita (6 Meses)
+                    Garantía Escrita 
                   </a>
                 </li>
                 <li>
@@ -208,7 +164,7 @@ const Footer = () => {
                 <li>
                   <a href="mailto:ventas@neonflex.com.ar" className="flex items-center gap-3 group hover:text-white transition-colors">
                     <FaEnvelope className="text-cyan-400 shrink-0" size={14} />
-                    <span className="normal-case tracking-normal font-medium text-sm">ventas@neonflex.com.ar</span>
+                    <span className="normal-case tracking-normal font-medium text-sm">neonflexpremium08@gmail.com</span>
                   </a>
                 </li>
               </ul>
@@ -251,7 +207,7 @@ const Footer = () => {
           {/* 4. FILA INFERIOR: Copyright, Créditos y Acceso Admin */}
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 gap-4">
             <p>&copy; {new Date().getFullYear()} NeonFlex Premium. Todos los derechos reservados.</p>
-            <p>Desarrollado por Leandro Jerez & Faustina Retamar</p>
+            <p>Desarrollado por Leandro Jerez y Faustina Retamar</p>
             <div className="flex gap-6">
               <Link to="/admin" className="hover:text-cyan-400 transition-colors">
                 Acceso Interno
@@ -263,6 +219,6 @@ const Footer = () => {
       </footer>
     </>
   );
-};
+
 
 export default Footer;

@@ -177,7 +177,7 @@ export default function Presupuesto() {
               </div>
               <h1 className="font-['Orbitron'] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight uppercase mb-4 leading-tight">
                 Tu idea. <br className="hidden sm:block" />
-                <span className="text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">En neón.</span>
+                <span className="text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">Hecha realidad.</span>
               </h1>
               <p className="max-w-xl text-lg text-gray-400 font-medium">
                 Cuéntanos qué imaginas y nuestro equipo creará una cotización a la medida de tu espacio.
@@ -190,7 +190,7 @@ export default function Presupuesto() {
                 <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
                   <div>
                     <p className="text-[10px] font-bold font-['Orbitron'] text-cyan-400 tracking-[0.2em] uppercase">01 / Proyecto</p>
-                    <h2 className="font-['Orbitron'] mt-1 text-lg font-bold tracking-wider uppercase text-white">Configura tu letrero</h2>
+                    <h2 className="font-['Orbitron'] mt-1 text-lg font-bold tracking-wider uppercase text-white">Configura tu cartel</h2>
                   </div>
                 </div>
 

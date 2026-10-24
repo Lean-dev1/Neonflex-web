@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const DEFAULT_DESCRIPTION =
   'Una pieza de luz diseñada para transformar el espacio. Fabricada artesanalmente con neón LED de alta intensidad sobre base resistente, combina estética industrial, precisión técnica y una presencia inconfundible.';
@@ -214,21 +215,18 @@ export default function ProductDetailModal({
     categoryNames[product.category?.toLowerCase()] || product.category || 'Cartelería';
 
   const formattedCode = String(product.id).padStart(3, '0');
+  const productMeasures = product.medidas?.trim() ? product.medidas : 'Consultar medidas';
 
   const buyMessage = encodeURIComponent(
-    `Hola NeonFlex Premium, quiero consultar por "${product.title}" (Cód. ${formattedCode} - ${formattedPrice}).`
-  );
-  const customMessage = encodeURIComponent(
-    `Hola NeonFlex Premium, vi el modelo "${product.title}" (Cód. ${formattedCode}) y quiero cotizar una versión a medida en otro tamaño o color.`
+    `Hola NeonFlex Premium, quiero consultar por "${product.title}" (Cód. ${formattedCode} - Medidas: ${productMeasures} - ${formattedPrice}).`
   );
 
   const waBuyUrl = `https://wa.me/${whatsappNumber}?text=${buyMessage}`;
-  const waCustomUrl = `https://wa.me/${whatsappNumber}?text=${customMessage}`;
 
   const features = [
     { icon: 'bolt', label: 'Tecnología', value: 'LED 12 V' },
     { icon: 'install', label: 'Instalación', value: 'Listo para colgar' },
-    { icon: 'ruler', label: 'Medidas', value: product.medidas || 'A personalizar' },
+    { icon: 'ruler', label: 'Medidas', value: productMeasures },
   ];
 
   return (
@@ -321,7 +319,6 @@ export default function ProductDetailModal({
               </p>
 
               <div className="mt-[22px] md:mt-[24px] flex flex-col items-stretch gap-[14px] text-center">
-                {/* Botón de WhatsApp en verde plano sin hover ni transiciones */}
                 <a
                   className="hidden md:flex min-h-[56px] items-center justify-center gap-[10px] rounded-[6px] bg-[#25D366] px-[18px] text-[15px] font-bold text-white"
                   href={waBuyUrl}
@@ -332,14 +329,14 @@ export default function ProductDetailModal({
                   Consultar por WhatsApp
                 </a>
 
-                <a
+                {/* Redirige directamente al cotizador /presupuesto */}
+                <Link
+                  to={`/presupuesto?modelo=${encodeURIComponent(product.title)}`}
+                  onClick={onClose}
                   className="text-[14px] leading-[1.5] text-[#4aa8ff] hover:underline"
-                  href={waCustomUrl}
-                  target="_blank"
-                  rel="noreferrer"
                 >
                   ¿Lo querés en otra medida o color? Pedí tu versión a medida
-                </a>
+                </Link>
 
                 <button
                   type="button"
@@ -389,7 +386,7 @@ export default function ProductDetailModal({
             </div>
           </div>
 
-          {/* Barra inferior fija de compra en Mobile - Botón verde plano sin efectos */}
+          {/* Barra inferior fija de compra en Mobile */}
           <footer className="fixed bottom-0 left-0 right-0 z-10 flex md:hidden h-[72px] items-center justify-between gap-[14px] bg-[#1a1a1d] border-t border-[#2c2c30] py-2 pr-3 pl-4">
             <div className="flex flex-col shrink-0">
               <span className="text-[14px] text-[#b9b4bc]">Precio final</span>

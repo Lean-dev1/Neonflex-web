@@ -13,6 +13,7 @@ import {
   FaInstagram
 } from 'react-icons/fa';
 import api from '../api/axios';
+import ProductDetailModal from '../components/ProductDetailModal';
 
 import imgLumi from '../assets/images/tijera.jpeg';
 import bgLadrillos from '../assets/images/pared.jpg';
@@ -48,17 +49,17 @@ const benefits = [
   {
     icon: FaTruck,
     title: "Envíos a todo el país",
-    desc: "Embalaje especial anti-roturas por Correo Argentino"
+    desc: ""
   },
   {
     icon: FaShieldAlt,
-    title: "Garantía de 6 meses",
+    title: "Garantia",
     desc: "Cubre fallas técnicas y de iluminación"
   },
   {
     icon: FaPencilRuler,
-    title: "Diseño sin costo",
-    desc: "Mockup digital a medida en menos de 24 h"
+    title: "Cotizacion sin costo",
+    desc: "Tu presupuesto en menos de 24 hs"
   },
   {
     icon: FaPlug,
@@ -113,9 +114,9 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const carouselRef = useRef(null);
 
-  // Carga de productos desde el Backend
   useEffect(() => {
     const fetchNovedades = async () => {
       try {
@@ -142,7 +143,6 @@ const Home = () => {
     fetchNovedades();
   }, []);
 
-  // Auto-rotación del Hero
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -150,7 +150,6 @@ const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Auto-scroll del carrusel de productos
   useEffect(() => {
     const interval = setInterval(() => {
       if (carouselRef.current) {
@@ -197,7 +196,6 @@ const Home = () => {
 
       <div className="relative text-gray-300 font-['Rajdhani'] min-h-screen selection:bg-cyan-40 selection:text-black">
         
-        {/* FONDO GLOBAL DE LADRILLOS */}
         <div 
           className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${bgLadrillos})` }}
@@ -212,7 +210,6 @@ const Home = () => {
          <section className="relative pt-36 md:pt-44 pb-16 px-4 md:px-8 w-full max-w-[1200px] mx-auto overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center min-h-[380px]">
               
-              {/* Columna Izquierda: Texto limpio y directo */}
               <div className="flex flex-col items-start text-left z-10 order-2 lg:order-1">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-['Orbitron'] uppercase tracking-tight mb-3 leading-[1.12]">
                   {slide.title} <br/>
@@ -232,7 +229,6 @@ const Home = () => {
                   {slide.ctaText} <FaArrowRight size={11} />
                 </Link>
 
-                {/* Indicadores minimalistas (solo puntitos) */}
                 <div className="mt-8 flex items-center gap-2.5">
                   {heroSlides.map((_, index) => (
                     <button
@@ -250,7 +246,6 @@ const Home = () => {
                 </div>
               </div>
 
-              {/* Columna Derecha: Cartel Neón Realista */}
               <div className="relative flex flex-col items-center select-none order-1 lg:order-2">
                 <div className="relative flex flex-col items-center rotate-[-2deg] transition-transform duration-700 hover:rotate-0 hover:scale-[1.02] z-10 cursor-default">
                   <div className="absolute -top-2 left-[20%] -translate-x-1/2 w-2 h-2 bg-gradient-to-b from-[#666] to-[#222] rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.8)] border border-white/20 z-20"></div>
@@ -276,7 +271,7 @@ const Home = () => {
 
             </div>
           </section>
-          {/* 2. BARRA DE BENEFICIOS (De tu diseño de Figma) */}
+
           <section className="border-y border-white/10 bg-[#111117]/80 backdrop-blur-md">
             <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-white/10">
@@ -302,7 +297,6 @@ const Home = () => {
             </div>
           </section>
 
-          {/* 3. COMPRÁ POR CATEGORÍA (De tu diseño de Figma) */}
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
               <div>
@@ -327,14 +321,12 @@ const Home = () => {
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${cat.accent} opacity-70 group-hover:opacity-100 transition-opacity`} />
                   
-                  {/* Simulación visual de neón en el centro de la tarjeta */}
                   <div className="relative z-10 flex-1 flex items-center justify-center">
                     <span className="font-['Varela_Round'] text-xl sm:text-2xl md:text-3xl text-white/80 group-hover:text-white group-hover:scale-105 transition-all text-center drop-shadow-[0_0_12px_rgba(0,240,255,0.5)]">
                       {cat.sampleText}
                     </span>
                   </div>
 
-                  {/* Etiqueta inferior estilo Figma */}
                   <div className="relative z-10 bg-[#050508]/90 border border-white/10 group-hover:border-cyan-400/40 rounded-sm p-3 backdrop-blur-md transition-colors">
                     <div className="flex items-center justify-between">
                       <span className="font-['Orbitron'] font-bold text-xs sm:text-sm text-white uppercase tracking-wider">
@@ -351,7 +343,7 @@ const Home = () => {
             </div>
           </section>
 
-          {/* 4. ÚLTIMOS DISEÑOS / NOVEDADES (Conectado a tu API + Tarjetas estilo Figma) */}
+          {/* 4. ÚLTIMOS DISEÑOS CON APERTURA DE MODAL */}
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto border-t border-white/10 bg-[#0a0a0f]/40 backdrop-blur-sm overflow-hidden">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 relative z-10">
               <div>
@@ -385,14 +377,15 @@ const Home = () => {
                 ref={carouselRef}
                 className="flex gap-5 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6"
               >
-                {featuredProducts.map((prod) => {
+                {featuredProducts.map((prod, idx) => {
                   const formattedPrice = Math.round(prod.price).toLocaleString("es-AR");
                   const message = encodeURIComponent(`Hola NeonFlex Premium, quiero comprar el cartel "${prod.title}" por $${formattedPrice}.`);
 
                   return (
                     <article 
                       key={prod.id} 
-                      className="min-w-[78vw] sm:min-w-[calc(50%-10px)] lg:min-w-[calc(33.333%-14px)] xl:min-w-[calc(25%-15px)] snap-start bg-[#111117]/90 backdrop-blur-md border border-white/10 rounded-sm overflow-hidden group hover:border-cyan-400/50 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                      onClick={() => setSelectedProduct(prod)}
+                      className="min-w-[78vw] sm:min-w-[calc(50%-10px)] lg:min-w-[calc(33.333%-14px)] xl:min-w-[calc(25%-15px)] snap-start bg-[#111117]/90 backdrop-blur-md border border-white/10 rounded-sm overflow-hidden group hover:border-cyan-400/50 hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                     >
                       <div className="relative aspect-square bg-black overflow-hidden border-b border-white/10">
                         <img 
@@ -403,7 +396,10 @@ const Home = () => {
                           className="w-full h-full object-cover filter saturate-95 group-hover:scale-105 group-hover:saturate-100 transition-transform duration-500 will-change-transform" 
                         />
                         <div className="absolute top-2.5 left-2.5 bg-[#050508]/80 border border-cyan-400/40 text-cyan-400 text-[8px] font-['Orbitron'] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest z-10 flex items-center gap-1.5 backdrop-blur-sm">
-                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> NUEVO
+                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> #{String(idx + 1).padStart(2, '0')}
+                        </div>
+                        <div className="absolute z-10 right-2.5 bottom-2.5 grid w-8 h-8 place-items-center border border-white/15 bg-[#050508]/75 text-white backdrop-blur-md group-hover:border-cyan-400 group-hover:text-cyan-400 transition-colors">
+                          <FaArrowRight size={11} />
                         </div>
                       </div>
 
@@ -427,6 +423,7 @@ const Home = () => {
                             href={`${waLink}?text=${message}`} 
                             target="_blank" 
                             rel="noreferrer" 
+                            onClick={(e) => e.stopPropagation()}
                             className="w-full bg-cyan-500 hover:bg-white text-[#050508] py-2.5 px-3 rounded-sm text-[10px] font-bold font-['Orbitron'] tracking-widest uppercase flex items-center justify-center gap-2 transition-colors shadow-[0_0_12px_rgba(0,240,255,0.2)]"
                           >
                             <FaWhatsapp size={14} /> Comprar por WhatsApp
@@ -446,7 +443,6 @@ const Home = () => {
             </div>
           </section>
 
-          {/* 5. STATEMENT DEL TALLER (De tu diseño de Figma) */}
           <section className="py-12 px-4 md:px-8 max-w-[1200px] mx-auto">
             <div className="relative bg-[#111117]/90 border border-white/10 rounded-sm p-8 sm:p-12 md:p-16 text-center overflow-hidden shadow-2xl">
               <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-cyan-500/10 blur-[80px] pointer-events-none" />
@@ -459,7 +455,6 @@ const Home = () => {
             </div>
           </section>
 
-          {/* 6. SECCIÓN A MEDIDA (Pasos 1-2-3) */}
           <section className="bg-[#111117]/60 backdrop-blur-md border-y border-white/10 py-16 px-4 md:px-8">
             <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div className="relative aspect-[4/3] bg-black border border-white/10 rounded-sm overflow-hidden group shadow-2xl">
@@ -510,7 +505,6 @@ const Home = () => {
             </div>
           </section>
 
-          {/* 7. SEGUINOS EN INSTAGRAM (De tu diseño de Figma) */}
           <section className="py-16 px-4 md:px-8 max-w-[1200px] mx-auto text-center">
             <p className="text-cyan-400 font-['Orbitron'] text-[10px] sm:text-xs font-bold tracking-[0.2em] mb-2 uppercase">
               Comunidad NeonFlex
@@ -557,7 +551,6 @@ const Home = () => {
             </a>
           </section>
 
-          {/* 8. NEWSLETTER (De tu diseño de Figma) */}
           <section className="border-t border-white/10 bg-[#111117]/90 backdrop-blur-md py-12 px-4 md:px-8">
             <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <div>
@@ -594,7 +587,6 @@ const Home = () => {
 
         </div>
 
-        {/* BOTÓN FLOTANTE DE WHATSAPP */}
         <a
           href={waLink}
           target="_blank"
@@ -604,6 +596,12 @@ const Home = () => {
         >
           <FaWhatsapp size={28} />
         </a>
+
+        {/* Modal de Detalle de Producto */}
+        <ProductDetailModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
 
       </div>
     </>

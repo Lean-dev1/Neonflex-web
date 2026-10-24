@@ -1,224 +1,413 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-function DetailIcon({ name }) {
+const DEFAULT_DESCRIPTION =
+  'Una pieza de luz diseñada para transformar el espacio. Fabricada artesanalmente con neón LED de alta intensidad sobre base resistente, combina estética industrial, precisión técnica y una presencia inconfundible.';
+
+const categoryNames = {
+  carteleria: 'Cartelería',
+  impresion3d: 'Impresión 3D',
+  insumos: 'Insumos',
+  frases: 'Textos y Frases',
+  figuras: 'Figuras',
+  negocios: 'Negocios',
+  logos: 'Negocios',
+};
+
+function Icon({ name, size = 24 }) {
   const paths = {
-    bolt: <path d="M13 2 4.5 13H11l-1 9 8.5-12H12l1-8Z" />,
-    mount: (
+    close: <path d="m6 6 12 12M18 6 6 18" />,
+    check: <path d="m5 12 4 4L19 6" />,
+    bolt: <path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z" />,
+    install: <path d="M4 19h16M7 16V5h10v11M9 8h6" />,
+    ruler: (
       <>
-        <path d="M4 5h16v14H4z" />
-        <path d="m8 5 4-3 4 3M8 19l4-4 4 4" />
+        <path d="M4 16 16 4l4 4L8 20l-4-4Z" />
+        <path d="m13 7 2 2M10 10l2 2M7 13l2 2" />
       </>
     ),
-    size: (
+    truck: (
       <>
-        <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" />
-        <path d="M3 8 9 2M21 8l-6-6M3 16l6 6M21 16l-6 6" />
+        <path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z" />
+        <circle cx="7" cy="18" r="2" />
+        <circle cx="18" cy="18" r="2" />
       </>
+    ),
+    shield: <path d="M12 3 5 6v5c0 4.6 2.9 8.2 7 10 4.1-1.8 7-5.4 7-10V6l-7-3Z" />,
+    hand: (
+      <path d="M7 11V7a2 2 0 0 1 4 0v3-5a2 2 0 0 1 4 0v5-3a2 2 0 0 1 4 0v7c0 4-3 7-7 7h-1c-2 0-3.3-1-4.5-2.5L3 14a2.1 2.1 0 0 1 3-3l1 1" />
     ),
     whatsapp: (
       <>
-        <path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.7a8.5 8.5 0 1 1 16.1-4.2Z" />
-        <path d="M8.2 7.7c.3-.6.6-.6.9-.6h.4c.2 0 .4.1.5.4l.8 1.9c.1.3.1.5-.1.7l-.6.8c-.2.2-.2.4-.1.7.5 1 1.3 1.8 2.3 2.3.3.2.5.1.7-.1l.8-1c.2-.2.4-.3.7-.2l1.9.9c.3.1.4.3.4.5 0 .4-.2 1.5-.8 2-.6.5-1.4.8-2.6.5-1.2-.3-2.8-1-4.5-2.6-1.4-1.3-2.3-2.9-2.6-4-.4-1.1 0-1.7.3-2.2Z" />
+        <path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.6Z" />
+        <path d="M9 8.5c.4 3 2 4.6 5 5" />
       </>
     ),
   };
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 shrink-0 text-cyan-400">
-      {paths[name]}
+    <svg
+      aria-hidden="true"
+      className="shrink-0"
+      fill="none"
+      height={size}
+      viewBox="0 0 24 24"
+      width={size}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8">
+        {paths[name]}
+      </g>
     </svg>
   );
 }
 
-const categoryNames = {
-  carteleria: 'CARTELERÍA',
-  impresion3d: 'IMPRESIÓN 3D',
-  insumos: 'INSUMOS',
-};
+function ImagePlaceholder({ label = 'Imagen del producto', hideText = false }) {
+  return (
+    <div
+      aria-label={label}
+      className="flex aspect-square h-full w-full min-w-0 items-center justify-center rounded-none md:rounded-[6px] border-y md:border border-[#3b3b40] bg-[#27272b] text-[#b9b4bc]"
+      role="img"
+    >
+      {!hideText && <span className="text-[14px] text-center px-4">Foto no disponible</span>}
+    </div>
+  );
+}
 
-export default function ProductDetailModal({ product, onClose, whatsappNumber = '5491100000000' }) {
-  // Cerrar con la tecla Escape
+function Gallery({ product }) {
+  const [active, setActive] = useState(0);
+
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+    setActive(0);
+  }, [product]);
+
+  // Soporta un array de imágenes (product.images) o la imagen única de PostgreSQL (product.image_url)
+  const rawImages =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : product.image_url
+      ? [product.image_url]
+      : [''];
+
+  const multiple = rawImages.length > 1;
+  const activeSrc = rawImages[active];
+
+  return (
+    <div
+      className={`block md:grid content-start min-w-0 relative ${
+        multiple ? 'md:gap-4 md:grid-cols-[72px_minmax(0,1fr)]' : ''
+      }`}
+    >
+      {multiple && (
+        <div aria-label="Imágenes del producto" className="hidden md:flex flex-col gap-3">
+          {rawImages.map((imgUrl, index) => (
+            <button
+              aria-label={`Ver imagen ${index + 1}`}
+              aria-pressed={active === index}
+              className={`h-[72px] w-[72px] overflow-hidden rounded-[6px] bg-transparent p-0 cursor-pointer transition-all ${
+                active === index ? 'border-2 border-[#f5f2ee]' : 'border border-[#2c2c30]'
+              }`}
+              key={index}
+              onClick={() => setActive(index)}
+              type="button"
+            >
+              {imgUrl ? (
+                <img
+                  src={imgUrl}
+                  alt=""
+                  className="h-full w-full object-cover rounded-[3px]"
+                />
+              ) : (
+                <ImagePlaceholder label="" hideText />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="aspect-square w-full min-w-0 overflow-hidden md:rounded-[6px] border-y md:border border-[#3b3b40] bg-[#27272b]">
+        {activeSrc ? (
+          <img
+            src={activeSrc}
+            alt={`Foto de ${product.title}`}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <ImagePlaceholder label={`Foto de ${product.title}`} />
+        )}
+      </div>
+
+      {multiple && (
+        <div
+          aria-label={`Imagen ${active + 1} de ${rawImages.length}`}
+          className="flex md:hidden items-center justify-center gap-2 absolute bottom-[15px] left-0 right-0"
+        >
+          {rawImages.map((_, index) => (
+            <button
+              aria-label={`Ver imagen ${index + 1}`}
+              aria-pressed={active === index}
+              className={`h-2 w-2 rounded-full border-0 p-0 cursor-pointer ${
+                active === index ? 'bg-[#f5f2ee] opacity-100' : 'bg-[#b9b4bc] opacity-55'
+              }`}
+              key={index}
+              onClick={() => setActive(index)}
+              type="button"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const assurances = [
+  { icon: 'truck', text: 'Envíos a todo el país por Correo Argentino' },
+  { icon: 'shield', text: 'Garantía de 6 meses' },
+  { icon: 'hand', text: 'Hecho a mano en Argentina' },
+];
+
+export default function ProductDetailModal({
+  product,
+  onClose,
+  whatsappNumber = '5491164477337',
+}) {
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    if (!product) return;
+
+    const previousFocus = document.activeElement;
+    const dialog = dialogRef.current;
+    const focusables = dialog?.querySelectorAll(
+      'button, a[href], [tabindex]:not([tabindex="-1"])'
+    );
+    focusables?.[0]?.focus();
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab' || !focusables?.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus?.();
+    };
+  }, [product, onClose]);
 
   if (!product) return null;
 
-  const isRedAccent = product.category === 'impresion3d';
-  const formattedPrice = `$${Number(product.price).toLocaleString('es-AR')}`;
-  const displayCategory = categoryNames[product.category] || product.category?.toUpperCase() || 'PIEZA DE AUTOR';
+  const formattedPrice =
+    typeof product.price === 'string' && product.price.startsWith('$')
+      ? product.price
+      : `$${Math.round(Number(product.price || 0)).toLocaleString('es-AR')}`;
 
-  const openWhatsApp = () => {
-    const message = encodeURIComponent(
-      `Hola NeonFlex, quiero consultar por ${product.title} (${formattedPrice}).`
-    );
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
-  };
+  const displayCategory =
+    categoryNames[product.category?.toLowerCase()] || product.category || 'Cartelería';
+
+  const formattedCode = String(product.id).padStart(3, '0');
+
+  const buyMessage = encodeURIComponent(
+    `Hola NeonFlex Premium, quiero consultar por "${product.title}" (Cód. ${formattedCode} - ${formattedPrice}).`
+  );
+  const customMessage = encodeURIComponent(
+    `Hola NeonFlex Premium, vi el modelo "${product.title}" (Cód. ${formattedCode}) y quiero cotizar una versión a medida en otro tamaño o color.`
+  );
+
+  const waBuyUrl = `https://wa.me/${whatsappNumber}?text=${buyMessage}`;
+  const waCustomUrl = `https://wa.me/${whatsappNumber}?text=${customMessage}`;
+
+  const features = [
+    { icon: 'bolt', label: 'Tecnología', value: 'LED 12 V' },
+    { icon: 'install', label: 'Instalación', value: 'Listo para colgar' },
+    { icon: 'ruler', label: 'Medidas', value: product.medidas || 'A personalizar' },
+  ];
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#050508]/85 backdrop-blur-md p-4 md:p-6 overflow-y-auto font-['Rajdhani']"
-      onClick={onClose}
-    >
-      <div 
-        className="relative w-full max-w-[1380px] my-auto bg-[#111117]/95 border border-white/10 shadow-[0_35px_90px_rgba(0,0,0,0.65)] backdrop-blur-xl overflow-hidden rounded-sm animate-fadeIn"
-        onClick={(e) => e.stopPropagation()}
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        @keyframes nf-modal-fade { from { opacity: 0; } to { opacity: 1; } }
+      `}</style>
+
+      <div
+        className="fixed inset-0 z-50 flex items-stretch md:items-center justify-center bg-black/70 p-0 md:px-6 md:py-[5vh] font-['Montserrat',sans-serif] text-[#f5f2ee] text-[16px] animate-[nf-modal-fade_150ms_ease-out]"
+        onMouseDown={(event) => event.target === event.currentTarget && onClose()}
       >
-        {/* Barra superior estilo técnico (Breadcrumb de Figma) */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#050508]/60 font-['Orbitron'] text-[9px] tracking-[0.15em] text-gray-500">
-          <div className="flex items-center gap-2.5">
-            <span>CATÁLOGO</span>
-            <span className="text-cyan-400">/</span>
-            <span className="text-gray-300">{displayCategory}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="hidden sm:inline">NF—{String(product.id).padStart(3, '0')}</span>
-            <button 
+        <div
+          aria-labelledby="product-title"
+          aria-modal="true"
+          className="relative w-full max-w-none md:max-w-[1080px] max-h-[100dvh] md:max-h-[90vh] overflow-y-auto bg-[#1a1a1d] border-0 md:border md:border-[#2c2c30] rounded-none md:rounded-[8px] shadow-[0_16px_48px_rgba(0,0,0,0.35)] pt-[56px] pb-[88px] md:p-0"
+          ref={dialogRef}
+          role="dialog"
+        >
+          {/* Header fijo Mobile */}
+          <header className="fixed top-0 left-0 right-0 z-10 flex md:hidden h-[56px] items-center justify-between bg-[#1a1a1d] border-b border-[#2c2c30] pl-4">
+            <span className="text-[14px] font-semibold truncate pr-3">{product.title}</span>
+            <button
+              aria-label="Cerrar"
+              className="flex h-[44px] w-[44px] items-center justify-center bg-transparent border-0 text-[#f5f2ee] hover:bg-[#2c2c30] cursor-pointer"
               onClick={onClose}
-              className="text-gray-400 hover:text-cyan-400 text-xs font-bold tracking-widest uppercase transition-colors cursor-pointer"
+              type="button"
             >
-              [ CERRAR ✕ ]
+              <Icon name="close" />
             </button>
-          </div>
-        </div>
+          </header>
 
-        {/* Grilla Principal 2 Columnas */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.08fr_0.92fr] min-h-[620px]">
-          
-          {/* Columna Izquierda: Imagen con marco y esquineros */}
-          <div className="p-3 md:p-4 border-b lg:border-b-0 lg:border-r border-white/10">
-            <div className={`relative h-full min-h-[380px] sm:min-h-[480px] lg:min-h-[600px] overflow-hidden bg-[#09090c] border transition-all duration-300 group ${
-              isRedAccent 
-                ? 'border-[#ff0055]/20 hover:border-[#ff0055]/60 hover:shadow-[0_0_35px_rgba(255,0,85,0.1)]' 
-                : 'border-cyan-400/20 hover:border-cyan-400/60 hover:shadow-[0_0_35px_rgba(0,240,255,0.1)]'
-            }`}>
-              <img 
-                src={product.image_url} 
-                alt={product.title} 
-                className="w-full h-full object-cover saturate-[0.92] contrast-[1.05] transition-transform duration-700 group-hover:scale-105"
-              />
-              
-              {/* Degradado inferior */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030305]/90 pointer-events-none" />
+          {/* Botón Cerrar Desktop */}
+          <button
+            aria-label="Cerrar"
+            className="hidden md:flex absolute top-3 right-3 z-10 h-[44px] w-[44px] items-center justify-center rounded-[5px] bg-transparent border-0 text-[#f5f2ee] hover:bg-[#2c2c30] cursor-pointer transition-colors"
+            onClick={onClose}
+            type="button"
+          >
+            <Icon name="close" />
+          </button>
 
-              {/* Esquineros técnicos (image-corners de Figma) */}
-              <div className="absolute inset-4 pointer-events-none">
-                <i className="absolute top-0 left-0 w-6 h-6 border-t border-l border-white/40" />
-                <i className="absolute top-0 right-0 w-6 h-6 border-t border-r border-white/40" />
-                <i className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-white/40" />
-                <i className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-white/40" />
-              </div>
+          {/* Contenido Principal */}
+          <div className="flex flex-col md:grid md:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] gap-0 md:gap-8 p-0 md:p-8">
+            <Gallery product={product} />
 
-              {/* Etiqueta inferior izquierda */}
-              <div className="absolute bottom-7 left-7 flex items-baseline gap-2.5 font-['Orbitron']">
-                <span className="text-gray-400 text-[9px] tracking-[0.18em]">PIEZA</span>
-                <strong className={`text-2xl md:text-3xl ${isRedAccent ? 'text-[#ff0055]' : 'text-cyan-400'}`}>
-                  #{String(product.id).padStart(2, '0')}
-                </strong>
-              </div>
-
-              <span className="hidden sm:block absolute right-7 bottom-8 text-gray-500 font-['Orbitron'] text-[7px] tracking-[0.14em] uppercase">
-                NEONFLEX · ORIGINAL
-              </span>
-            </div>
-          </div>
-
-          {/* Columna Derecha: Información y Especificaciones */}
-          <div className="flex flex-col p-6 sm:p-10 lg:p-14">
-            
-            <div className="flex items-center justify-between gap-4">
-              <span className={`px-3 py-1.5 border rounded-full font-['Orbitron'] text-[9px] font-bold tracking-[0.13em] ${
-                isRedAccent 
-                  ? 'border-[#ff0055]/50 text-[#ff0055] bg-[#ff0055]/5' 
-                  : 'border-cyan-400/45 text-cyan-400 bg-cyan-400/5'
-              }`}>
-                {displayCategory}
-              </span>
-              <span className="hidden sm:inline font-['Orbitron'] text-[8px] tracking-[0.12em] text-gray-400">
-                <span className="text-cyan-400 mr-1">●</span> DISPONIBLE A PEDIDO
-              </span>
-            </div>
-
-            <div className="mt-8 lg:mt-12">
-              <span className="block mb-2.5 text-gray-400 text-xs font-semibold tracking-[0.15em] uppercase">
-                Neón LED flexible / Serie Oficial
-              </span>
-              <h2 className="font-['Orbitron'] text-3xl sm:text-5xl font-bold uppercase leading-[0.98] tracking-wide text-white">
-                {product.title}
-              </h2>
-            </div>
-
-            <div className="flex items-end gap-4 mt-7 pb-6 border-b border-white/10">
-              <span className="font-['Orbitron'] text-3xl sm:text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.25)]">
-                {formattedPrice}
-              </span>
-              <span className="pb-1.5 text-gray-500 text-[10px] font-semibold tracking-[0.11em]">
-                ARS · PRECIO FINAL
-              </span>
-            </div>
-
-            <p className="mt-6 text-gray-400 text-base sm:text-[17px] font-medium leading-relaxed">
-              {product.description || 
-                'Una pieza de luz diseñada para transformar el espacio. Fabricada artesanalmente con neón LED de alta intensidad sobre base resistente, combina estética industrial, precisión técnica y una presencia inconfundible.'}
-            </p>
-
-            {/* Grilla de Especificaciones */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 mt-8 border-t border-b border-white/10">
-              <div className="flex items-center gap-3 py-4 px-3 border-b sm:border-b-0 sm:border-r border-white/10 text-gray-200 text-[11px] font-bold tracking-wider">
-                <DetailIcon name="bolt" />
-                <div>
-                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">TECNOLOGÍA</small>
-                  LED 12V
-                </div>
-              </div>
-              <div className="flex items-center gap-3 py-4 px-3 border-b sm:border-b-0 sm:border-r border-white/10 text-gray-200 text-[11px] font-bold tracking-wider">
-                <DetailIcon name="mount" />
-                <div>
-                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">INSTALACIÓN</small>
-                  LISTO PARA COLGAR
-                </div>
-              </div>
-              <div className="flex items-center gap-3 py-4 px-3 text-gray-200 text-[11px] font-bold tracking-wider">
-                <DetailIcon name="size" />
-                <div>
-                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">MEDIDAS</small>
-                  A PERSONALIZAR
-                </div>
-              </div>
-            </div>
-
-            {/* Botones de Acción */}
-            <div className="mt-auto pt-8">
-              <button
-                onClick={openWhatsApp}
-                className="w-full flex items-center justify-between px-6 py-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-[#001416] hover:shadow-[0_0_25px_rgba(0,240,255,0.3)] font-['Orbitron'] text-xs font-bold tracking-[0.11em] transition-all cursor-pointer"
+            <div className="min-w-0 px-5 pt-6 pb-10 md:p-0 md:pt-1">
+              <nav
+                aria-label="Ruta de navegación"
+                className="flex items-center gap-2 text-[14px] text-[#b9b4bc] md:pr-[52px]"
               >
-                <span>CONSULTAR POR WHATSAPP</span>
-                <DetailIcon name="whatsapp" />
-              </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="text-[#4aa8ff] hover:underline bg-transparent border-0 p-0 cursor-pointer font-inherit"
+                >
+                  Catálogo
+                </button>
+                <span aria-hidden="true">/</span>
+                <span>{displayCategory}</span>
+              </nav>
 
-              <button
-                onClick={onClose}
-                className="mt-4 text-gray-400 hover:text-white text-xs font-bold tracking-[0.11em] uppercase transition-colors cursor-pointer flex items-center gap-2"
-              >
-                <span className="text-cyan-400">←</span> VOLVER AL CATÁLOGO
-              </button>
+              <div className="mt-[18px] md:mt-[22px]">
+                <h1
+                  id="product-title"
+                  className="text-[28px] md:text-[30px] font-bold leading-[1.2] m-0 md:max-w-[18ch] text-[#f5f2ee]"
+                >
+                  {product.title}
+                </h1>
+                <p className="text-[14px] text-[#b9b4bc] mt-[9px] mb-0">
+                  Cód. {formattedCode}
+                </p>
+              </div>
+
+              <div className="mt-[22px] md:mt-[24px]">
+                <p className="text-[30px] md:text-[32px] font-bold leading-[1.1] m-0 mb-[7px] text-[#f5f2ee]">
+                  {formattedPrice}
+                </p>
+                <p className="text-[14px] text-[#b9b4bc] m-0">
+                  Precio final. Efectivo o transferencia.
+                </p>
+              </div>
+
+              <p className="mt-[20px] mb-0 flex items-center gap-[9px] font-semibold text-[#f5f2ee]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#f5f2ee]">
+                  <Icon name="check" size={18} />
+                </span>
+                Disponible a pedido
+              </p>
+
+              <div className="mt-[22px] md:mt-[24px] flex flex-col items-stretch gap-[14px] text-center">
+                <a
+                  className="hidden md:flex min-h-[56px] items-center justify-center gap-[10px] rounded-[6px] bg-[#d3142b] hover:bg-[#b80f24] px-[18px] text-[15px] font-bold text-white transition-colors"
+                  href={waBuyUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Icon name="whatsapp" />
+                  Consultar por WhatsApp
+                </a>
+
+                <a
+                  className="text-[14px] leading-[1.5] text-[#4aa8ff] hover:underline"
+                  href={waCustomUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  ¿Lo querés en otra medida o color? Pedí tu versión a medida
+                </a>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-[1px] text-[14px] text-[#b9b4bc] hover:underline bg-transparent border-0 p-0 cursor-pointer font-inherit"
+                >
+                  Volver al catálogo
+                </button>
+              </div>
+
+              <section className="mt-[30px] md:mt-[32px]">
+                <h2 className="text-[16px] font-semibold m-0 mb-3 text-[#f5f2ee]">Descripción</h2>
+                <p className="text-[#b9b4bc] leading-[1.65] m-0 max-w-[60ch]">
+                  {product.description || DEFAULT_DESCRIPTION}
+                </p>
+              </section>
+
+              <section className="mt-[30px] md:mt-[32px]">
+                <h2 className="text-[16px] font-semibold m-0 mb-3 text-[#f5f2ee]">Características</h2>
+                <div className="border-t border-[#2c2c30]">
+                  {features.map((feature) => (
+                    <div
+                      className="grid grid-cols-[24px_1fr] md:grid-cols-[24px_minmax(90px,1fr)_auto] items-center gap-3 border-b border-[#2c2c30] py-3 md:py-0 md:min-h-[61px]"
+                      key={feature.label}
+                    >
+                      <Icon name={feature.icon} />
+                      <span className="text-[14px] text-[#b9b4bc]">{feature.label}</span>
+                      <strong className="col-start-2 md:col-auto text-[16px] font-semibold text-left md:text-right text-[#f5f2ee]">
+                        {feature.value}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <div className="mt-[32px] border-t border-[#2c2c30] pt-5">
+                {assurances.map((item) => (
+                  <div
+                    className="flex min-h-[44px] items-center gap-[14px] leading-[1.45]"
+                    key={item.text}
+                  >
+                    <Icon name={item.icon} />
+                    <span className="text-[14px] text-[#b9b4bc]">{item.text}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Footer de garantías */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-7 text-gray-500 text-[9px] font-bold tracking-[0.11em]">
-              <span><b className="text-cyan-400 mr-1">+</b>HECHO A MANO EN ARGENTINA</span>
-              <span><b className="text-cyan-400 mr-1">+</b>GARANTÍA DE FÁBRICA</span>
-              <span><b className="text-cyan-400 mr-1">+</b>ENVÍOS A TODO EL PAÍS</span>
-            </div>
-
           </div>
+
+          {/* Barra inferior fija de compra en Mobile */}
+          <footer className="fixed bottom-0 left-0 right-0 z-10 flex md:hidden h-[72px] items-center justify-between gap-[14px] bg-[#1a1a1d] border-t border-[#2c2c30] py-2 pr-3 pl-4">
+            <div className="flex flex-col shrink-0">
+              <span className="text-[14px] text-[#b9b4bc]">Precio final</span>
+              <strong className="text-[18px] text-[#f5f2ee]">{formattedPrice}</strong>
+            </div>
+            <a
+              className="flex min-h-[52px] items-center justify-center gap-[10px] rounded-[6px] bg-[#d3142b] hover:bg-[#b80f24] px-3 text-[13px] font-bold text-white transition-colors"
+              href={waBuyUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="whatsapp" size={20} />
+              Consultar por WhatsApp
+            </a>
+          </footer>
         </div>
       </div>
-    </div>
+    </>
   );
 }

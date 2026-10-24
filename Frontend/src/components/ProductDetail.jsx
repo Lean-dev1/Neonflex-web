@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 const DEFAULT_DESCRIPTION =
   'Una pieza de luz diseñada para transformar el espacio. Fabricada artesanalmente con neón LED de alta intensidad sobre base resistente, combina estética industrial, precisión técnica y una presencia inconfundible.';
@@ -80,7 +79,6 @@ function Gallery({ product }) {
     setActive(0);
   }, [product]);
 
-  // Soporta un array de imágenes (product.images) o la imagen única de PostgreSQL (product.image_url)
   const rawImages =
     Array.isArray(product.images) && product.images.length > 0
       ? product.images
@@ -323,8 +321,9 @@ export default function ProductDetailModal({
               </p>
 
               <div className="mt-[22px] md:mt-[24px] flex flex-col items-stretch gap-[14px] text-center">
+                {/* Botón de WhatsApp en verde plano sin hover ni transiciones */}
                 <a
-                  className="hidden md:flex min-h-[56px] items-center justify-center gap-[10px] rounded-[6px] bg-[#d3142b] hover:bg-[#b80f24] px-[18px] text-[15px] font-bold text-white transition-colors"
+                  className="hidden md:flex min-h-[56px] items-center justify-center gap-[10px] rounded-[6px] bg-[#25D366] px-[18px] text-[15px] font-bold text-white"
                   href={waBuyUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -390,14 +389,14 @@ export default function ProductDetailModal({
             </div>
           </div>
 
-          {/* Barra inferior fija de compra en Mobile */}
+          {/* Barra inferior fija de compra en Mobile - Botón verde plano sin efectos */}
           <footer className="fixed bottom-0 left-0 right-0 z-10 flex md:hidden h-[72px] items-center justify-between gap-[14px] bg-[#1a1a1d] border-t border-[#2c2c30] py-2 pr-3 pl-4">
             <div className="flex flex-col shrink-0">
               <span className="text-[14px] text-[#b9b4bc]">Precio final</span>
               <strong className="text-[18px] text-[#f5f2ee]">{formattedPrice}</strong>
             </div>
             <a
-              className="flex min-h-[52px] items-center justify-center gap-[10px] rounded-[6px] bg-[#d3142b] hover:bg-[#b80f24] px-3 text-[13px] font-bold text-white transition-colors"
+              className="flex min-h-[52px] items-center justify-center gap-[10px] rounded-[6px] bg-[#25D366] px-3 text-[13px] font-bold text-white"
               href={waBuyUrl}
               target="_blank"
               rel="noreferrer"

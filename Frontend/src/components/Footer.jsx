@@ -16,6 +16,16 @@ import logo from '../assets/images/neon.png';
 const waLink = "https://wa.me/5491164477337";
 const igLink = "https://www.instagram.com/neonflexpremium/";
 
+const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubscribed(true);
+    setEmail("");
+  };
 
   return (
     <>
@@ -42,6 +52,37 @@ const igLink = "https://www.instagram.com/neonflexpremium/";
             </div>
             
             {/* Formulario de Suscripción Funcional */}
+            <form onSubmit={handleSubscribe} className="w-full md:w-auto">
+              <label htmlFor="footer-newsletter" className="block text-white font-['Orbitron'] font-bold uppercase tracking-[0.2em] text-xs mb-3">
+                Enterate de nuevos diseños
+              </label>
+              <div className="flex relative w-full md:w-96 group">
+                <input 
+                  id="footer-newsletter"
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Tu correo electrónico" 
+                  className="w-full bg-[#0a0a0f] border border-white/15 rounded-l-sm py-3 px-4 text-white focus:outline-none focus:border-cyan-400 transition-colors placeholder:text-gray-600 text-sm font-medium" 
+                />
+                <button 
+                  type="submit"
+                  aria-label="Suscribirme"
+                  className="bg-cyan-500/15 border border-cyan-400/40 border-l-0 text-cyan-400 px-5 rounded-r-sm font-['Orbitron'] text-xs font-bold hover:bg-cyan-500 hover:text-[#050508] transition-all flex items-center justify-center gap-2 shrink-0"
+                >
+                  {subscribed ? (
+                    <>
+                      <FaCheck size={12} /> <span className="hidden sm:inline">LISTO</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">UNIRME</span> <FaArrowRight size={12} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
 
           {/* 2. GRILLA DE 4 COLUMNAS (Estructura Figma + Colores Cyberpunk) */}
@@ -219,6 +260,6 @@ const igLink = "https://www.instagram.com/neonflexpremium/";
       </footer>
     </>
   );
-
+};
 
 export default Footer;

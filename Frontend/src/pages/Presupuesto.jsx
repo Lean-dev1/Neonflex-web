@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import bgLadrillos from '../assets/images/fondo.webp';
-import api from '../api/axios';
+import emailjs from '@emailjs/browser';
 import { validateFile, IMAGE_TYPES } from '../utils/validateFile';
 
 const colors = [
@@ -86,45 +86,48 @@ export default function Presupuesto() {
       .join(" + ");
 
     try {
-      
-      let attachmentData = null;
-      if (fileObjeto && projectType === "Logo") {
-        attachmentData = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(fileObjeto);
-          reader.onload = () => resolve({ name: fileObjeto.name, data: reader.result });
-          reader.onerror = error => reject(error);
-        });
-      }
+      // 1. Configuramos los textos dinámicos para la tabla HTML
+      const hasAttachment = fileObjeto && projectType === "Logo";
+      const attachmentText = hasAttachment 
+        ? '<p style="font-size: 13px; color: #666; margin-top: 15px;"><em>* 📎 El cliente intentó adjuntar un boceto en la web. Pediselo por WhatsApp o mail para ver el diseño exacto.</em></p>' 
+        : '';
+        
+      const estilo_texto = projectType === "Frase" ? `(Estilo: ${letterStyle})` : '';
 
-     
-      const payload = {
+      // 2. Armamos el objeto con las variables exactas que espera tu plantilla de EmailJS
+      const templateParams = {
         nombre: formData.nombre,
         email: formData.email,
         telefono: formData.telefono,
-        projectType,
+        projectType: projectType,
+        estilo_texto: estilo_texto,
         ideaText: formData.ideaText,
         colores: colorNames,
-        estilo: letterStyle,
         ancho: formData.ancho,
         alto: formData.alto,
-        attachment: attachmentData
+        attachmentText: attachmentText
       };
 
+      // 3. Enviamos el correo directamente desde React (¡Reemplazá estos 3 strings!)
+      await emailjs.send(
+        'service_tv179ij', 
+        'template_edi4ejg', 
+        templateParams, 
+        'ed6qks7QmV6HcwbnC'
+      );
       
-      await api.post('/cotizaciones/enviar', payload);
+      setFeedback({ type: 'success', message: '¡Solicitud enviada exitosamente! Nos contactaremos pronto.' });
       
-      setFeedback({ type: 'success', message: '¡Solicitud enviada exitosamente! Revisá tu correo.' });
-      
-     
+      // 4. Limpiamos el formulario tras el éxito
       setFormData({ ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: "" });
       setSelectedColors([colors[4].value]);
       setFileObjeto(null);
       setFileName("");
       setTerminosAceptados(false);
+      
     } catch (error) {
       setFeedback({ type: 'error', message: 'Error al enviar. Intenta de nuevo o escribinos al WhatsApp.' });
-      console.error(error);
+      console.error('Error de EmailJS:', error);
     } finally {
       setLoading(false);
     }

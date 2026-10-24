@@ -3,8 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../api/axios'; 
 import bgLadrillos from '../assets/images/fondo.webp';
+import ProductDetailModal from '../components/ProductDetailModal';
 
-// Mapeo inteligente de categorías: Lo que lee el usuario vs Lo que busca en la base de datos
 const CATEGORIES_MAP = {
   "Todos": "Todos",
   "Textos y Frases": "frases",
@@ -12,7 +12,6 @@ const CATEGORIES_MAP = {
   "Negocios": "negocios"
 };
 
-// Mapeo inverso para traducir el parámetro ?categoria= de la URL al nombre visual
 const URL_TO_CATEGORY_LABEL = {
   "frases": "Textos y Frases",
   "figuras": "Figuras",
@@ -58,31 +57,45 @@ function getCategoryDisplayName(dbCategory) {
   return 'Textos y Frases';
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, index, onSelect }) {
   const formattedPrice = Math.round(product.price).toLocaleString("es-AR");
   const message = encodeURIComponent(`Hola NeonFlex Premium, quiero comprar el cartel "${product.title}" por $${formattedPrice}.`);
+  const isRed = product.category?.toLowerCase() === 'figuras' || product.category?.toLowerCase() === 'impresion3d';
 
   return (
-    <article className="bg-[#111117]/90 border border-white/10 hover:border-cyan-400/50 hover:-translate-y-1 transition-all duration-300 rounded-sm flex flex-col h-full group backdrop-blur-sm overflow-hidden">
-      
+    <article 
+      onClick={() => onSelect(product)}
+      className={`bg-[#111117]/90 border border-white/10 transition-all duration-300 rounded-sm flex flex-col h-full group backdrop-blur-sm overflow-hidden cursor-pointer hover:-translate-y-1.5 ${
+        isRed 
+          ? 'hover:border-[#ff0055]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4),0_0_20px_rgba(255,0,85,0.08)]' 
+          : 'hover:border-cyan-400/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4),0_0_20px_rgba(0,240,255,0.08)]'
+      }`}
+    >
       <div className="relative aspect-square bg-black overflow-hidden border-b border-white/10">
         <img 
           src={product.image_url} 
           alt={product.title} 
           loading="lazy" 
           decoding="async"
-          className="w-full h-full object-cover group-hover:scale-105 group-hover:saturate-100 filter saturate-95 transition-transform duration-500 will-change-transform" 
+          className="w-full h-full object-cover group-hover:scale-105 group-hover:saturate-100 filter saturate-90 brightness-90 group-hover:brightness-100 transition-all duration-500 will-change-transform" 
         />
         
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div className="absolute top-2.5 left-2.5 bg-[#050508]/80 border border-cyan-400/40 text-cyan-400 text-[8px] font-['Orbitron'] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest z-10 flex items-center gap-1.5 backdrop-blur-sm">
-          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> STOCK
+        <div className="absolute inset-0 bg-gradient-to-t from-[#040407]/90 via-transparent to-transparent"></div>
+        
+        {/* Índice estilo Figma arriba a la izquierda */}
+        <div className="absolute top-3 left-3 bg-[#050508]/80 border border-white/15 text-white/75 text-[9px] font-['Orbitron'] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest z-10 backdrop-blur-sm">
+          #{String(index + 1).padStart(2, '0')}
+        </div>
+
+        {/* Flecha indicadora de detalle estilo Figma abajo a la derecha */}
+        <div className="absolute z-10 right-3 bottom-3 grid w-8 h-8 place-items-center border border-white/15 bg-[#050508]/75 text-white backdrop-blur-md group-hover:border-cyan-400 group-hover:text-cyan-400 transition-colors">
+          <Icon name="arrow" size={14} />
         </div>
       </div>
 
       <div className="p-3.5 md:p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-center text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-1.5">
-          <span className="text-cyan-400/80">
+          <span className={isRed ? "text-[#ff0055]" : "text-cyan-400/90"}>
             {getCategoryDisplayName(product.category)}
           </span>
           <span>COD-{product.id}</span>
@@ -104,6 +117,7 @@ function ProductCard({ product }) {
             href={`${waLink}?text=${message}`}
             target="_blank"
             rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="w-full bg-cyan-500 hover:bg-white text-[#050508] font-['Orbitron'] font-bold py-2.5 px-3 rounded-sm flex items-center justify-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors shadow-[0_0_12px_rgba(0,240,255,0.2)]"
           >
             <FaWhatsapp size={14} /> Comprar por WhatsApp
@@ -118,12 +132,12 @@ export default function Productos() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
   const [sortOrder, setSortOrder] = useState("Novedades");
 
-  // 1. Escuchar cambios en la URL (?categoria=... y ?buscar=...) desde la Navbar o el Home
   useEffect(() => {
     const catParam = searchParams.get("categoria")?.toLowerCase();
     const searchParam = searchParams.get("buscar");
@@ -141,7 +155,6 @@ export default function Productos() {
     }
   }, [searchParams]);
 
-  // 2. Cargar productos desde el Backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -156,7 +169,6 @@ export default function Productos() {
     fetchProducts();
   }, []);
 
-  // Función auxiliar para verificar si un producto pertenece a una categoría
   const matchesTargetCategory = (productCategory, targetCat) => {
     if (targetCat === "Todos") return true;
     const prodCat = productCategory?.toLowerCase();
@@ -166,7 +178,6 @@ export default function Productos() {
     return prodCat === targetCat;
   };
 
-  // Cambiar categoría y limpiar o actualizar la URL
   const handleCategoryClick = (label) => {
     setCategory(label);
     const targetCat = CATEGORIES_MAP[label];
@@ -218,7 +229,6 @@ export default function Productos() {
           <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,0,0,0.06)_0%,transparent_70%)] pointer-events-none"></div>
         </div>
         
-        {/* pt-36 / md:pt-44 compensa la altura de la nueva Navbar de 3 pisos */}
         <div className="relative z-10 pt-36 md:pt-44 pb-20">
           <section className="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
             
@@ -361,8 +371,13 @@ export default function Productos() {
                 </div>
               ) : filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5">
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {filteredProducts.map((product, index) => (
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      index={index}
+                      onSelect={(prod) => setSelectedProduct(prod)}
+                    />
                   ))}
                 </div>
               ) : (
@@ -383,6 +398,12 @@ export default function Productos() {
             </div>
           </section>
         </div>
+
+        {/* Modal de Detalle de Producto */}
+        <ProductDetailModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
       </div>
     </>
   );

@@ -1,166 +1,224 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import api from '../api/axios';
-import { FaWhatsapp, FaArrowLeft, FaTruck, FaShieldAlt, FaTools, FaStar } from 'react-icons/fa';
+import React, { useEffect } from 'react';
 
-const ProductDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+function DetailIcon({ name }) {
+  const paths = {
+    bolt: <path d="M13 2 4.5 13H11l-1 9 8.5-12H12l1-8Z" />,
+    mount: (
+      <>
+        <path d="M4 5h16v14H4z" />
+        <path d="m8 5 4-3 4 3M8 19l4-4 4 4" />
+      </>
+    ),
+    size: (
+      <>
+        <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" />
+        <path d="M3 8 9 2M21 8l-6-6M3 16l6 6M21 16l-6 6" />
+      </>
+    ),
+    whatsapp: (
+      <>
+        <path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.7a8.5 8.5 0 1 1 16.1-4.2Z" />
+        <path d="M8.2 7.7c.3-.6.6-.6.9-.6h.4c.2 0 .4.1.5.4l.8 1.9c.1.3.1.5-.1.7l-.6.8c-.2.2-.2.4-.1.7.5 1 1.3 1.8 2.3 2.3.3.2.5.1.7-.1l.8-1c.2-.2.4-.3.7-.2l1.9.9c.3.1.4.3.4.5 0 .4-.2 1.5-.8 2-.6.5-1.4.8-2.6.5-1.2-.3-2.8-1-4.5-2.6-1.4-1.3-2.3-2.9-2.6-4-.4-1.1 0-1.7.3-2.2Z" />
+      </>
+    ),
+  };
 
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 shrink-0 text-cyan-400">
+      {paths[name]}
+    </svg>
+  );
+}
+
+const categoryNames = {
+  carteleria: 'CARTELERÍA',
+  impresion3d: 'IMPRESIÓN 3D',
+  insumos: 'INSUMOS',
+};
+
+export default function ProductDetailModal({ product, onClose, whatsappNumber = '5491100000000' }) {
+  // Cerrar con la tecla Escape
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await api.get('/products');
-        const foundProduct = res.data.find(p => p.id.toString() === id);
-        
-        if (foundProduct) {
-          setProduct(foundProduct);
-        } else {
-          navigate('/productos');
-        }
-      } catch (error) {
-        console.error("Error cargando el producto", error);
-      } finally {
-        setLoading(false);
-      }
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
     };
-
-    fetchProduct();
-  }, [id, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-950">
-        <div className="w-12 h-12 border-4 border-gray-200 dark:border-neutral-800 border-t-blue-600 dark:border-t-neon-blue rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   if (!product) return null;
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white pt-28 pb-24 font-sans transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* NAVEGACIÓN SUPERIOR */}
-        <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-neutral-500 mb-10">
-          <Link to="/" className="hover:text-gray-900 dark:hover:text-white transition-colors">Inicio</Link>
-          <span>/</span>
-          <Link to="/productos" className="hover:text-gray-900 dark:hover:text-white transition-colors">Catálogo</Link>
-          <span>/</span>
-          <span className="text-gray-900 dark:text-white truncate">{product.title}</span>
-        </nav>
+  const isRedAccent = product.category === 'impresion3d';
+  const formattedPrice = `$${Number(product.price).toLocaleString('es-AR')}`;
+  const displayCategory = categoryNames[product.category] || product.category?.toUpperCase() || 'PIEZA DE AUTOR';
 
-        {/* CONTENEDOR PRINCIPAL */}
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
+  const openWhatsApp = () => {
+    const message = encodeURIComponent(
+      `Hola NeonFlex, quiero consultar por ${product.title} (${formattedPrice}).`
+    );
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#050508]/85 backdrop-blur-md p-4 md:p-6 overflow-y-auto font-['Rajdhani']"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-[1380px] my-auto bg-[#111117]/95 border border-white/10 shadow-[0_35px_90px_rgba(0,0,0,0.65)] backdrop-blur-xl overflow-hidden rounded-sm animate-fadeIn"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Barra superior estilo técnico (Breadcrumb de Figma) */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#050508]/60 font-['Orbitron'] text-[9px] tracking-[0.15em] text-gray-500">
+          <div className="flex items-center gap-2.5">
+            <span>CATÁLOGO</span>
+            <span className="text-cyan-400">/</span>
+            <span className="text-gray-300">{displayCategory}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:inline">NF—{String(product.id).padStart(3, '0')}</span>
+            <button 
+              onClick={onClose}
+              className="text-gray-400 hover:text-cyan-400 text-xs font-bold tracking-widest uppercase transition-colors cursor-pointer"
+            >
+              [ CERRAR ✕ ]
+            </button>
+          </div>
+        </div>
+
+        {/* Grilla Principal 2 Columnas */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.08fr_0.92fr] min-h-[620px]">
           
-          {/* COLUMNA IZQUIERDA: */}
-          <div className="w-full lg:w-3/5 lg:sticky lg:top-32 relative">
-             <div className="w-full aspect-square md:aspect-[4/3] bg-black rounded-3xl overflow-hidden border border-gray-200 dark:border-neutral-800 shadow-xl relative">
-                
-               
-                <img 
-                  src={product.image_url} 
-                  alt={product.title} 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                
-               
-                <div className="absolute top-6 left-6 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md text-gray-900 dark:text-white text-[10px] font-black px-4 py-2 rounded-lg border border-gray-200/50 dark:border-neutral-700/50 uppercase tracking-widest z-20 shadow-lg flex items-center gap-2">
-                   <FaStar className="text-yellow-500" /> Premium Quality
-                </div>
-             </div>
+          {/* Columna Izquierda: Imagen con marco y esquineros */}
+          <div className="p-3 md:p-4 border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className={`relative h-full min-h-[380px] sm:min-h-[480px] lg:min-h-[600px] overflow-hidden bg-[#09090c] border transition-all duration-300 group ${
+              isRedAccent 
+                ? 'border-[#ff0055]/20 hover:border-[#ff0055]/60 hover:shadow-[0_0_35px_rgba(255,0,85,0.1)]' 
+                : 'border-cyan-400/20 hover:border-cyan-400/60 hover:shadow-[0_0_35px_rgba(0,240,255,0.1)]'
+            }`}>
+              <img 
+                src={product.image_url} 
+                alt={product.title} 
+                className="w-full h-full object-cover saturate-[0.92] contrast-[1.05] transition-transform duration-700 group-hover:scale-105"
+              />
+              
+              {/* Degradado inferior */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030305]/90 pointer-events-none" />
+
+              {/* Esquineros técnicos (image-corners de Figma) */}
+              <div className="absolute inset-4 pointer-events-none">
+                <i className="absolute top-0 left-0 w-6 h-6 border-t border-l border-white/40" />
+                <i className="absolute top-0 right-0 w-6 h-6 border-t border-r border-white/40" />
+                <i className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-white/40" />
+                <i className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-white/40" />
+              </div>
+
+              {/* Etiqueta inferior izquierda */}
+              <div className="absolute bottom-7 left-7 flex items-baseline gap-2.5 font-['Orbitron']">
+                <span className="text-gray-400 text-[9px] tracking-[0.18em]">PIEZA</span>
+                <strong className={`text-2xl md:text-3xl ${isRedAccent ? 'text-[#ff0055]' : 'text-cyan-400'}`}>
+                  #{String(product.id).padStart(2, '0')}
+                </strong>
+              </div>
+
+              <span className="hidden sm:block absolute right-7 bottom-8 text-gray-500 font-['Orbitron'] text-[7px] tracking-[0.14em] uppercase">
+                NEONFLEX · ORIGINAL
+              </span>
+            </div>
           </div>
 
-          {/* COLUMNA DERECHA: Información y Compra */}
-          <div className="w-full lg:w-2/5 flex flex-col">
+          {/* Columna Derecha: Información y Especificaciones */}
+          <div className="flex flex-col p-6 sm:p-10 lg:p-14">
             
-            {/* Título y Precio */}
-            <div className="mb-10">
-               <h1 className="text-4xl md:text-5xl font-black uppercase text-gray-900 dark:text-white tracking-tight mb-4 leading-[1.1]">
-                 {product.title}
-               </h1>
-               <div className="flex flex-col gap-1">
-                 <span className="text-5xl font-black text-blue-700 dark:text-neon-blue tracking-tighter">
-                   ${product.price}
-                 </span>
-                 <span className="text-sm font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-widest mt-2">
-                   Precio final. Efectivo o Transferencia.
-                 </span>
-               </div>
+            <div className="flex items-center justify-between gap-4">
+              <span className={`px-3 py-1.5 border rounded-full font-['Orbitron'] text-[9px] font-bold tracking-[0.13em] ${
+                isRedAccent 
+                  ? 'border-[#ff0055]/50 text-[#ff0055] bg-[#ff0055]/5' 
+                  : 'border-cyan-400/45 text-cyan-400 bg-cyan-400/5'
+              }`}>
+                {displayCategory}
+              </span>
+              <span className="hidden sm:inline font-['Orbitron'] text-[8px] tracking-[0.12em] text-gray-400">
+                <span className="text-cyan-400 mr-1">●</span> DISPONIBLE A PEDIDO
+              </span>
             </div>
 
-            {/* Descripción */}
-            <div className="mb-10">
-               <h3 className="text-sm font-black uppercase tracking-widest text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-neutral-800 pb-2">
-                 Sobre este diseño
-               </h3>
-               <p className="text-gray-600 dark:text-neutral-400 text-base leading-relaxed">
-                 {product.description || 'Diseño fabricado con base de acrílico cristal de 4mm y tecnología Neón Flex LED de última generación. Listo para enchufar y colgar. Transformá la vibra de tu espacio en minutos.'}
-               </p>
+            <div className="mt-8 lg:mt-12">
+              <span className="block mb-2.5 text-gray-400 text-xs font-semibold tracking-[0.15em] uppercase">
+                Neón LED flexible / Serie Oficial
+              </span>
+              <h2 className="font-['Orbitron'] text-3xl sm:text-5xl font-bold uppercase leading-[0.98] tracking-wide text-white">
+                {product.title}
+              </h2>
             </div>
 
-            {/* Botón de Compra Gigante */}
-            <div className="mb-12 bg-gray-50 dark:bg-neutral-900/50 p-6 rounded-2xl border border-gray-200 dark:border-neutral-800">
-               <p className="text-center text-xs font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-widest mb-4">
-                 Compra directa y personalizada
-               </p>
-               <a 
-                 href={`https://wa.me/5491164477337?text=Hola! Quiero avanzar con la compra del cartel: "${product.title}" ($${product.price}).`}
-                 target="_blank" rel="noreferrer" 
-                 className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 px-6 rounded-xl flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg uppercase tracking-widest text-sm md:text-base"
-               >
-                 <FaWhatsapp size={24} />
-                 Comprar por WhatsApp
-               </a>
+            <div className="flex items-end gap-4 mt-7 pb-6 border-b border-white/10">
+              <span className="font-['Orbitron'] text-3xl sm:text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.25)]">
+                {formattedPrice}
+              </span>
+              <span className="pb-1.5 text-gray-500 text-[10px] font-semibold tracking-[0.11em]">
+                ARS · PRECIO FINAL
+              </span>
             </div>
 
-            {/* BLOQUES DE SEGURIDAD*/}
-            <div className="space-y-4">
-               
-               {/* Garantía */}
-               <div className="flex gap-4 p-5 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl items-start">
-                  <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-neon-blue p-3 rounded-xl">
-                     <FaShieldAlt size={24} />
-                  </div>
-                  <div>
-                     <h4 className="font-black text-gray-900 dark:text-white uppercase text-sm mb-1">Garantía de 6 Meses</h4>
-                     <p className="text-xs text-gray-600 dark:text-neutral-400 leading-relaxed">Cobertura total sobre fallas técnicas o de iluminación. Tu inversión está protegida.</p>
-                  </div>
-               </div>
+            <p className="mt-6 text-gray-400 text-base sm:text-[17px] font-medium leading-relaxed">
+              {product.description || 
+                'Una pieza de luz diseñada para transformar el espacio. Fabricada artesanalmente con neón LED de alta intensidad sobre base resistente, combina estética industrial, precisión técnica y una presencia inconfundible.'}
+            </p>
 
-               {/* Envíos */}
-               <div className="flex gap-4 p-5 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl items-start">
-                  <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-neon-red p-3 rounded-xl">
-                     <FaTruck size={24} />
-                  </div>
-                  <div>
-                     <h4 className="font-black text-gray-900 dark:text-white uppercase text-sm mb-1">Envíos a todo el país</h4>
-                     <p className="text-xs text-gray-600 dark:text-neutral-400 leading-relaxed">Despachamos mediante Correo Argentino con embalaje especial anti-roturas de madera.</p>
-                  </div>
-               </div>
+            {/* Grilla de Especificaciones */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 mt-8 border-t border-b border-white/10">
+              <div className="flex items-center gap-3 py-4 px-3 border-b sm:border-b-0 sm:border-r border-white/10 text-gray-200 text-[11px] font-bold tracking-wider">
+                <DetailIcon name="bolt" />
+                <div>
+                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">TECNOLOGÍA</small>
+                  LED 12V
+                </div>
+              </div>
+              <div className="flex items-center gap-3 py-4 px-3 border-b sm:border-b-0 sm:border-r border-white/10 text-gray-200 text-[11px] font-bold tracking-wider">
+                <DetailIcon name="mount" />
+                <div>
+                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">INSTALACIÓN</small>
+                  LISTO PARA COLGAR
+                </div>
+              </div>
+              <div className="flex items-center gap-3 py-4 px-3 text-gray-200 text-[11px] font-bold tracking-wider">
+                <DetailIcon name="size" />
+                <div>
+                  <small className="block text-gray-500 text-[8px] tracking-[0.12em] mb-0.5">MEDIDAS</small>
+                  A PERSONALIZAR
+                </div>
+              </div>
+            </div>
 
-               {/* Instalación */}
-               <div className="flex gap-4 p-5 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl items-start">
-                  <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 p-3 rounded-xl">
-                     <FaTools size={24} />
-                  </div>
-                  <div>
-                     <h4 className="font-black text-gray-900 dark:text-white uppercase text-sm mb-1">Listo para usar</h4>
-                     <p className="text-xs text-gray-600 dark:text-neutral-400 leading-relaxed">Incluye fuente de 12v a 220v y sistema de colgado fácil. Se instala como un cuadro en minutos.</p>
-                  </div>
-               </div>
+            {/* Botones de Acción */}
+            <div className="mt-auto pt-8">
+              <button
+                onClick={openWhatsApp}
+                className="w-full flex items-center justify-between px-6 py-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-[#001416] hover:shadow-[0_0_25px_rgba(0,240,255,0.3)] font-['Orbitron'] text-xs font-bold tracking-[0.11em] transition-all cursor-pointer"
+              >
+                <span>CONSULTAR POR WHATSAPP</span>
+                <DetailIcon name="whatsapp" />
+              </button>
 
+              <button
+                onClick={onClose}
+                className="mt-4 text-gray-400 hover:text-white text-xs font-bold tracking-[0.11em] uppercase transition-colors cursor-pointer flex items-center gap-2"
+              >
+                <span className="text-cyan-400">←</span> VOLVER AL CATÁLOGO
+              </button>
+            </div>
+
+            {/* Footer de garantías */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-7 text-gray-500 text-[9px] font-bold tracking-[0.11em]">
+              <span><b className="text-cyan-400 mr-1">+</b>HECHO A MANO EN ARGENTINA</span>
+              <span><b className="text-cyan-400 mr-1">+</b>GARANTÍA DE FÁBRICA</span>
+              <span><b className="text-cyan-400 mr-1">+</b>ENVÍOS A TODO EL PAÍS</span>
             </div>
 
           </div>
         </div>
-
       </div>
     </div>
   );
-};
-
-export default ProductDetail;
+}

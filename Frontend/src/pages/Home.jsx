@@ -13,7 +13,7 @@ import {
   FaInstagram
 } from 'react-icons/fa';
 import api from '../api/axios';
-import ProductDetailModal from '../components/ProductDetailModal';
+import ProductDetail from '../components/ProductDetail';
 
 import imgLumi from '../assets/images/tijera.jpeg';
 import bgLadrillos from '../assets/images/pared.jpg';
@@ -112,8 +112,6 @@ const Home = () => {
   const [portfolioPreview, setPortfolioPreview] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSent, setNewsletterSent] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const carouselRef = useRef(null);
 
@@ -171,12 +169,6 @@ const Home = () => {
     if (carouselRef.current) carouselRef.current.scrollBy({ left: 320, behavior: 'smooth' });
   };
 
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    if (!newsletterEmail) return;
-    setNewsletterSent(true);
-    setNewsletterEmail("");
-  };
 
   const slide = heroSlides[currentSlide];
 
@@ -551,39 +543,6 @@ const Home = () => {
             </a>
           </section>
 
-          <section className="border-t border-white/10 bg-[#111117]/90 backdrop-blur-md py-12 px-4 md:px-8">
-            <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black text-white font-['Orbitron'] uppercase tracking-wide mb-1">
-                  Enterate de nuevos diseños y promos
-                </h2>
-                <p className="text-gray-400 text-sm font-medium">
-                  Suscribite para recibir lanzamientos exclusivos y descuentos de taller.
-                </p>
-              </div>
-
-              <form onSubmit={handleNewsletterSubmit} className="w-full lg:w-auto flex flex-col sm:flex-row gap-3 min-w-[300px] sm:min-w-[460px]">
-                <label className="sr-only" htmlFor="newsletter-email">
-                  Tu correo electrónico
-                </label>
-                <input
-                  id="newsletter-email"
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="Tu correo electrónico"
-                  className="flex-1 bg-[#050508] border border-white/15 focus:border-cyan-400 rounded-sm px-4 py-3 text-sm text-white outline-none transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="bg-cyan-500 hover:bg-white text-[#050508] font-bold font-['Orbitron'] px-6 py-3 rounded-sm text-xs tracking-widest uppercase transition-colors shrink-0"
-                >
-                  {newsletterSent ? "¡SUSCRIPTO!" : "SUSCRIBIRME"}
-                </button>
-              </form>
-            </div>
-          </section>
 
         </div>
 
@@ -598,7 +557,7 @@ const Home = () => {
         </a>
 
         {/* Modal de Detalle de Producto */}
-        <ProductDetailModal 
+        <ProductDetail 
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
         />

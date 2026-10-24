@@ -24,14 +24,10 @@ function WhatsAppIcon() { return <svg viewBox="0 0 24 24" fill="none" className=
 
 export default function Presupuesto() {
   const [projectType, setProjectType] = useState("Frase");
-  
-  
   const [selectedColors, setSelectedColors] = useState([colors[4].value]); 
-  
   const [letterStyle, setLetterStyle] = useState("Cursiva");
   const [fileName, setFileName] = useState("");
   const [fileObjeto, setFileObjeto] = useState(null); 
-  
   const [terminosAceptados, setTerminosAceptados] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
@@ -79,22 +75,47 @@ export default function Presupuesto() {
     }
 
     setLoading(true);
-    setFeedback({ type: '', message: '' });
+    setFeedback({ type: '', message: 'Procesando tu solicitud...' });
 
     const colorNames = selectedColors
       .map(hex => colors.find(c => c.value === hex)?.name)
       .join(" + ");
 
     try {
-      // 1. Configuramos los textos dinámicos para la tabla HTML
-      const hasAttachment = fileObjeto && projectType === "Logo";
-      const attachmentText = hasAttachment 
-        ? '<p style="font-size: 13px; color: #666; margin-top: 15px;"><em>* 📎 El cliente intentó adjuntar un boceto en la web. Pediselo por WhatsApp o mail para ver el diseño exacto.</em></p>' 
-        : '';
+      let linkBoceto = "";
+
+      if (fileObjeto && projectType === "Logo") {
+        setFeedback({ type: '', message: 'Subiendo boceto de diseño...' });
+        const formDataImg = new FormData();
+        formDataImg.append('image', fileObjeto);
+
+        try {
+          // ACORDATE DE CAMBIAR ESTA LLAVE
+          const uploadRes = await fetch('https://api.imgbb.com/1/upload?key=aa1ecf9cab00e79306b0ce09b42a04d1', {
+            method: 'POST',
+            body: formDataImg
+          });
+          const imgData = await uploadRes.json();
+          if (imgData.success) {
+            linkBoceto = imgData.data.url; 
+          }
+        } catch (err) {
+          console.error("Error al subir imagen a ImgBB", err);
+        }
+      }
+
+     let attachmentText = '';
+      if (linkBoceto) {
+        attachmentText = `<div style="margin-top: 15px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; font-family: Arial, sans-serif; color: #333;">
+          <strong style="font-size: 14px;">📎 Boceto Adjunto:</strong><br><br>
+          <a href="${linkBoceto}" target="_blank" style="color: #e6e6e6; text-decoration: underline; font-weight: bold; font-size: 14px;">👉 Hacé clic acá para ver el diseño del cliente</a>
+        </div>`;
+      } else if (fileObjeto) {
+        attachmentText = `<p style="font-size: 13px; color: #c24444; margin-top: 15px; font-family: Arial, sans-serif;"><em>* El cliente intentó subir un archivo, pero hubo un error. Pedíselo por WhatsApp.</em></p>`;
+      }
         
       const estilo_texto = projectType === "Frase" ? `(Estilo: ${letterStyle})` : '';
 
-      // 2. Armamos el objeto con las variables exactas que espera tu plantilla de EmailJS
       const templateParams = {
         nombre: formData.nombre,
         email: formData.email,
@@ -105,10 +126,10 @@ export default function Presupuesto() {
         colores: colorNames,
         ancho: formData.ancho,
         alto: formData.alto,
-        attachmentText: attachmentText
+        attachmentText: attachmentText 
       };
 
-      // 3. Enviamos el correo directamente desde React (¡Reemplazá estos 3 strings!)
+      // ACORDATE DE CAMBIAR ESTAS TRES LLAVES
       await emailjs.send(
         'service_tv179ij', 
         'template_edi4ejg', 
@@ -118,7 +139,6 @@ export default function Presupuesto() {
       
       setFeedback({ type: 'success', message: '¡Solicitud enviada exitosamente! Nos contactaremos pronto.' });
       
-      // 4. Limpiamos el formulario tras el éxito
       setFormData({ ideaText: "", ancho: "", alto: "", nombre: "", telefono: "", email: "" });
       setSelectedColors([colors[4].value]);
       setFileObjeto(null);
@@ -141,7 +161,6 @@ export default function Presupuesto() {
 
       <main className="relative min-h-screen text-white font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
         
-        {/* FONDO */}
         <div className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgLadrillos})` }}>
           <div className="absolute inset-0 bg-[#050508]/90 backdrop-grayscale-[0.5]"></div>
           <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
@@ -167,7 +186,6 @@ export default function Presupuesto() {
 
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(310px,0.85fr)]">
               
-              {/* FORMULARIO */}
               <form onSubmit={handleSubmit} className="bg-[#111117]/80 backdrop-blur-md border border-white/5 rounded-sm p-6 sm:p-8 shadow-2xl">
                 <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
                   <div>
@@ -178,7 +196,6 @@ export default function Presupuesto() {
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   
-                  {/* Selector Frase o Logo */}
                   <fieldset className="sm:col-span-2">
                     <legend className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">¿Qué quieres crear?</legend>
                     <div className="grid grid-cols-2 gap-4">
@@ -195,7 +212,6 @@ export default function Presupuesto() {
                     </div>
                   </fieldset>
 
-                  {/* Input Principal */}
                   <label className="sm:col-span-2">
                     <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">
                       {projectType === "Frase" ? "Tu frase" : "Describe tu logo"}
@@ -203,7 +219,6 @@ export default function Presupuesto() {
                     <input required name="ideaText" value={formData.ideaText} onChange={handleInputChange} type="text" placeholder={projectType === "Frase" ? "Ej. Good vibes only" : "Ej. Logotipo circular para estudio creativo"} className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
                   </label>
 
-                  {/* Opciones Condicionales */}
                   {projectType === "Frase" ? (
                     <fieldset className="sm:col-span-2">
                       <legend className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Estilo de letra</legend>
@@ -230,7 +245,6 @@ export default function Presupuesto() {
                     </label>
                   )}
 
-                  {/* Medidas */}
                   <label>
                     <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Ancho Aprox.</span>
                     <div className="relative">
@@ -246,7 +260,6 @@ export default function Presupuesto() {
                     </div>
                   </label>
 
-                  {/* Datos Personales */}
                   <label>
                     <span className="block text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest mb-3">Tu Nombre</span>
                     <input required name="nombre" value={formData.nombre} onChange={handleInputChange} type="text" placeholder="Tu nombre" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
@@ -260,7 +273,6 @@ export default function Presupuesto() {
                     <input required name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="tu@email.com" className="w-full bg-[#0a0a0f] border border-white/10 rounded-sm p-4 text-white text-sm focus:border-cyan-400/50 outline-none transition-colors" />
                   </label>
 
-                  {/* Colores Múltiples */}
                   <fieldset className="sm:col-span-2">
                     <div className="mb-3 flex items-center justify-between">
                       <legend className="text-xs font-bold font-['Orbitron'] text-gray-400 uppercase tracking-widest">Colores (Elegí uno o más)</legend>
@@ -295,7 +307,7 @@ export default function Presupuesto() {
                 </div>
 
                 {feedback.message && (
-                  <div className={`mb-6 p-4 rounded-sm text-sm font-bold font-['Orbitron'] tracking-widest uppercase flex items-center gap-2 border ${feedback.type === 'success' ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'bg-red-500/10 border-red-500/50 text-red-400'}`}>
+                  <div className={`mb-6 p-4 rounded-sm text-sm font-bold font-['Orbitron'] tracking-widest uppercase flex items-center gap-2 border ${feedback.type === 'success' ? 'bg-green-500/10 border-green-500/50 text-green-400' : (feedback.type === 'error' ? 'bg-red-500/10 border-red-500/50 text-red-400' : 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400')}`}>
                     {feedback.message}
                   </div>
                 )}
@@ -306,7 +318,6 @@ export default function Presupuesto() {
                 </button>
               </form>
 
-              {/* SIDEBAR DERECHO */}
               <aside className="space-y-6">
                 <a href={waLink} target="_blank" rel="noreferrer" className="block bg-[#111117]/80 backdrop-blur-md border border-[#43e77d]/30 hover:border-[#43e77d] rounded-sm p-6 group transition-colors">
                   <div className="mb-6 flex items-start justify-between text-[#43e77d]">

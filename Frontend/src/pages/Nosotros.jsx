@@ -1,5 +1,8 @@
-import React from 'react';
-import bgLadrillos from '../assets/images/fondo.webp';
+import React, { useState, useEffect } from 'react';
+import bgLadrillos from '../assets/images/pared.jpg';
+import imagen1 from '../assets/images/diego4.png'
+import imagen2 from '../assets/images/nosotros.png'
+import imagen3 from '../assets/images/diego2.png'
 
 
 function HeartIcon({ className }) {
@@ -30,7 +33,6 @@ function ToolsIcon({ className }) {
   );
 }
 
-
 function ValueCard({ number, icon, title, children }) {
   return (
     <article className="bg-[#111117]/80 backdrop-blur-md border border-white/5 p-8 rounded-sm group hover:border-cyan-400/30 transition-colors">
@@ -45,10 +47,24 @@ function ValueCard({ number, icon, title, children }) {
   );
 }
 
-
-const workshopImage = "https://images.unsplash.com/photo-1778582384724-d6ce1dfe6df1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZW9uJTIwc2lnbiUyMHdvcmtzaG9wJTIwaW5kdXN0cmlhbCUyMGRhcmslMjBjcmFmdHNtYW58ZW58MXx8fHwxNzkxMDAxMDY1fDA&ixlib=rb-4.1.0&q=85&w=1600";
+// Array con las imágenes para el carrusel (Podés agregar más URLs acá)
+const workshopImages = [
+  imagen1,
+  imagen2, 
+  imagen3
+];
 
 export default function Nosotros() {
+  const [currentImg, setCurrentImg] = useState(0);
+
+  // Auto-scroll del carrusel cada 4 segundos
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImg((prev) => (prev + 1) % workshopImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <>
       <style>{`
@@ -57,21 +73,20 @@ export default function Nosotros() {
 
       <main className="relative min-h-screen text-white font-['Rajdhani'] selection:bg-cyan-400 selection:text-black">
         
-        
+        {/* Fondo Global */}
         <div 
           className="fixed inset-0 z-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${bgLadrillos})` }}
         >
           <div className="absolute inset-0 bg-[#050508]/90"></div>
-          
           <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.06)_0%,transparent_70%)] pointer-events-none"></div>
           <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,0,0,0.06)_0%,transparent_70%)] pointer-events-none"></div>
         </div>
 
-        <div className="relative z-10 pt-24 pb-20">
+        {/* Ajuste de margen superior (pt-40 md:pt-44) para respetar la nueva Navbar */}
+        <div className="relative z-10 pt-40 md:pt-44 pb-20">
           
-         
-          <section className="mx-auto grid max-w-[1440px] gap-14 px-4 pb-24 pt-16 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20 md:px-8">
+          <section className="mx-auto grid max-w-[1440px] gap-14 px-4 pb-24 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20 md:px-8">
             <div>
               <div className="mb-7 flex items-center gap-4">
                 <span className="h-[1px] w-10 bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
@@ -84,37 +99,56 @@ export default function Nosotros() {
               </h1>
 
               <p className="mt-8 max-w-xl text-lg leading-relaxed text-gray-400 font-medium">
-                Nacimos en un pequeño taller familiar, entre herramientas, cables y la obsesión por transformar ideas en
-                luz. Hoy combinamos ese oficio artesanal con tecnología de precisión para crear piezas que definen
-                espacios.
+                Nacimos como un pequeño emprendimiento familiar, entre herramientas, cables y la obsesión por transformar ideas en
+                realidad. Hoy combinamos este oficio artesanal con tecnología de precisión para crear piezas que resaltan la identidad de tu lugar.
               </p>
 
-              <blockquote className="mt-10 max-w-xl py-1 pl-7 border-l-4 border-red-500 shadow-[-10px_0_15px_-10px_rgba(255,0,0,0.2)]">
-                <p className="font-['Orbitron'] text-sm md:text-base font-bold uppercase leading-relaxed tracking-wider text-white">
-                  “No fabricamos neón en serie. Diseñamos la luz que hace único cada lugar.”
-                </p>
-                <footer className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-gray-500">— Taller NeonFlex, 2018</footer>
-              </blockquote>
+            
             </div>
 
-           
-            <figure className="relative mx-auto w-full max-w-[570px] bg-[#111117]/80 backdrop-blur-md p-2 border border-white/5 rounded-sm shadow-2xl lg:mx-0 group">
-              <div className="relative aspect-[4/4.7] overflow-hidden rounded-sm">
-                <img
-                  className="h-full w-full object-cover object-center grayscale opacity-80 filter saturate-50 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:saturate-100"
-                  src={workshopImage}
-                  alt="Artesano trabajando"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-6">
+            {/* Carrusel Deslizante Automático */}
+            <figure className="relative mx-auto w-full max-w-[570px] bg-[#111117]/80 backdrop-blur-md p-2 border border-white/5 rounded-sm shadow-2xl lg:mx-0">
+              <div className="relative aspect-[4/4.7] overflow-hidden rounded-sm bg-[#050508]">
+                
+                {/* Tira de imágenes que se desplaza en X */}
+                <div 
+                  className="flex h-full w-full transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${currentImg * 100}%)` }}
+                >
+                  {workshopImages.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Taller NeonFlex ${idx + 1}`}
+                      loading="lazy"
+                      className="h-full w-full shrink-0 object-cover object-center"
+                    />
+                  ))}
+                </div>
+
+                {/* Sombreado para que el texto resalte */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/20 to-transparent opacity-90 pointer-events-none" />
+                
+                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-6 z-10 pointer-events-none">
                   <div>
                     <p className="font-['Orbitron'] text-[10px] font-bold tracking-[0.3em] text-cyan-400 uppercase">HECHO A MANO</p>
-                    <p className="mt-2 text-xs font-bold text-gray-400 tracking-widest uppercase">Buenos Aires · Argentina</p>
+                    <p className="mt-2 text-xs font-bold text-gray-300 tracking-widest uppercase">Buenos Aires · Argentina</p>
                   </div>
-                  <span className="font-['Orbitron'] text-4xl font-black text-white/10 select-none">NFP</span>
+                  <span className="font-['Orbitron'] text-4xl font-black text-white/20 select-none">NFP</span>
                 </div>
+
+                {/* Puntitos indicadores del carrusel */}
+                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
+                  {workshopImages.map((_, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        idx === currentImg ? 'w-5 bg-cyan-400 shadow-[0_0_8px_#00f0ff]' : 'w-1.5 bg-white/40'
+                      }`} 
+                    />
+                  ))}
+                </div>
+
               </div>
             </figure>
           </section>
@@ -124,7 +158,6 @@ export default function Nosotros() {
             <div className="mx-auto max-w-[1440px]">
               
               <div className="mx-auto max-w-2xl text-center">
-                <p className="font-['Orbitron'] text-[10px] font-bold tracking-[0.34em] text-red-500 uppercase">LO QUE NOS MUEVE</p>
                 <h2 className="font-['Orbitron'] mt-5 text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white">
                   ¿Por qué elegirnos?
                 </h2>

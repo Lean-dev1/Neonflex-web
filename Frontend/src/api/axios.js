@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getToken, clearToken } from '../utils/auth';
 
 // En desarrollo usa el localhost; en producción exige la variable de entorno
-const baseURL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'https://neonflexpremium.netlify.app/' : '');
+const baseURL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3000/api' : '');
 
 if (!baseURL) {
   throw new Error('Falta VITE_API_URL en el build de producción.');

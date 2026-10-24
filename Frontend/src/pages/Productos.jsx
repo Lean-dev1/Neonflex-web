@@ -2,8 +2,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Link, useSearchParams } from 'react-router-dom';
 import { FaWhatsapp } from 'react-icons/fa';
 import api from '../api/axios'; 
-import bgLadrillos from '../assets/images/fondo.webp';
-import ProductDetailModal from '../components/ProductDetailModal';
+import bgLadrillos from '../assets/images/pared.jpg';
+import ProductDetail from '../components/ProductDetail';
 
 const CATEGORIES_MAP = {
   "Todos": "Todos",
@@ -400,7 +400,7 @@ export default function Productos() {
         </div>
 
         {/* Modal de Detalle de Producto */}
-        <ProductDetailModal 
+        <ProductDetail
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
         />

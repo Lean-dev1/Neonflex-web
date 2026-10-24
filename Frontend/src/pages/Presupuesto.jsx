@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import bgLadrillos from '../assets/images/fondo.webp';
+import bgLadrillos from '../assets/images/pared.jpg';
 import emailjs from '@emailjs/browser';
 import { validateFile, IMAGE_TYPES } from '../utils/validateFile';
 
